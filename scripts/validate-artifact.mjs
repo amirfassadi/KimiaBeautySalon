@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
+const workerPath = new URL('../dist/server/index.js', import.meta.url);
+const manifestPath = new URL('../dist/.openai/hosting.json', import.meta.url);
+const [source, manifestText] = await Promise.all([readFile(workerPath, 'utf8'), readFile(manifestPath, 'utf8')]);
+const manifest = JSON.parse(manifestText);
+assert.equal(manifest.project_id, 'appgprj_6aca957094f081919be3e287d2efe34c');
+assert.equal('static' in manifest, false, 'Worker deployment must not declare a static asset directory');
+const moduleUrl = `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
+const worker = await import(moduleUrl);
+assert.equal(typeof worker.default?.fetch, 'function', `${pathToFileURL(workerPath.pathname)} must export default.fetch`);
+console.log('Worker artifact is valid ESM and its hosting manifest targets the existing Site.');

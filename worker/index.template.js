@@ -1,4 +1,6 @@
 const PAGE_HTML = __PAGE_HTML__;
+const ADMIN_HTML = __ADMIN_HTML__;
+__PLATFORM_CODE__
 const MEDIA_BASE64 = {
   "/media/atelier.webp": __HERO_BASE64__,
   "/media/portrait.webp": __PORTRAIT_BASE64__,
@@ -14,12 +16,13 @@ function normalizeDigits(value) {
   return String(value ?? "").replace(/[۰-۹٠-٩]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩".indexOf(d) % 10));
 }
 function normalizeIranianPhone(value) {
+  if (/[^0-9۰-۹٠-٩+\s()-]/.test(String(value??""))) return null;
   let phone = normalizeDigits(value).replace(/[^0-9+]/g, "");
   if (phone.startsWith("0098")) phone = "+98" + phone.slice(4);
   else if (phone.startsWith("98")) phone = "+" + phone;
   else if (phone.startsWith("09")) phone = "+98" + phone.slice(1);
   else if (phone.startsWith("9") && phone.length === 10) phone = "+98" + phone;
-  return /^\+[1-9][0-9]{8,14}$/.test(phone) ? phone : null;
+  return /^\+989[0-9]{9}$/.test(phone) ? phone : null;
 }
 async function digestIp(ip, salt) {
   const bytes = new TextEncoder().encode(`${salt}:${ip || "unknown"}`);
@@ -49,10 +52,11 @@ async function createBooking(request, env) {
 
   let input;
   try {
-    const raw = await request.text();
+    const raw = new TextDecoder().decode(await boundedBody(request,12_000));
     if (raw.length > 12_000) return json({ message: "حجم اطلاعات ارسالی زیاد است." }, 413);
     input = JSON.parse(raw);
-  } catch {
+  } catch(e) {
+    if(e instanceof ApiError)return json({message:e.message},e.status);
     return json({ message: "اطلاعات درخواست قابل‌خواندن نیست." }, 400);
   }
   if (typeof input?.website === "string" && input.website.trim()) return json({ ok: true }, 202);
@@ -64,48 +68,24 @@ async function createBooking(request, env) {
   const note = String(input?.note ?? "").trim().slice(0, 700) || null;
   if (customerName.length < 2 || customerName.length > 100) return json({ message: "نام را درست وارد کن." }, 400);
   if (!phone) return json({ message: "شمارهٔ موبایل معتبر وارد کن." }, 400);
-  if (!SERVICES.has(serviceSlug)) return json({ message: "موضوع درخواست را انتخاب کن." }, 400);
+  if (!slugValid(serviceSlug)) return json({ message: "موضوع درخواست را انتخاب کن." }, 400);
+  if (!uuid(input.request_key) || input.consent !== true) return json({ message: "رضایت تماس و شناسهٔ درخواست لازم است." }, 400);
+  if(input.preferred_at && (typeof input.preferred_at!=='string' || !Number.isFinite(Date.parse(input.preferred_at)))) return json({message:"زمان پیشنهادی معتبر نیست."},400);
   if (!configReady(env)) return json({ code: "database_not_configured" }, 503);
 
   const ipHash = await digestIp(request.headers.get("cf-connecting-ip"), env.RATE_LIMIT_SALT);
-  const base = env.SUPABASE_URL.replace(/\/+$/, "");
-  let response;
   try {
-    response = await fetch(`${base}/rest/v1/rpc/create_booking_request`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "apikey": env.SUPABASE_SECRET_KEY,
-        "accept": "application/json",
-      },
-      body: JSON.stringify({
-        p_customer_name: customerName,
-        p_phone_e164: phone,
-        p_service_slug: serviceSlug,
-        p_preferred_time_text: preferredTime,
-        p_note: note,
-        p_ip_hash: ipHash,
-      }),
-    });
-  } catch {
-    return json({ message: "ارتباط با سامانهٔ نوبت‌دهی برقرار نشد." }, 502);
-  }
-  if (!response.ok) {
-    const errorText = await response.text().catch(() => "");
-    if (response.status === 429 || errorText.includes("rate_limited")) return json({ message: "تعداد درخواست‌ها زیاد شده؛ کمی بعد دوباره تلاش کن." }, 429);
-    if (errorText.includes("invalid_name")) return json({ message: "نام را درست وارد کن." }, 400);
-    if (errorText.includes("invalid_phone")) return json({ message: "شمارهٔ موبایل معتبر وارد کن." }, 400);
-    if (errorText.includes("service_unavailable")) return json({ message: "این خدمت فعلاً برای نوبت‌دهی فعال نیست." }, 400);
-    return json({ message: "ثبت درخواست انجام نشد؛ لطفاً دوباره تلاش کن." }, 502);
-  }
-  const payload = await response.json().catch(() => null);
-  const row = Array.isArray(payload) ? payload[0] : payload;
-  if (!row?.request_id) return json({ message: "پاسخ سامانهٔ نوبت‌دهی کامل نبود." }, 502);
-  return json({ ok: true, request_id: row.request_id, reference_code: row.reference_code }, 201);
+    const payload=await db(env,'rpc/create_booking_v2',{method:'POST',body:{p_customer_name:customerName,p_phone_e164:phone,p_service_slug:serviceSlug,p_preferred_time_text:preferredTime,p_note:note,p_ip_hash:ipHash,p_request_key:input.request_key,p_consent:true,p_preferred_at:input.preferred_at||null}});
+    const row=Array.isArray(payload)?payload[0]:payload;
+    if(!row?.request_id||!row?.reference_code)return json({message:'پاسخ سامانه کامل نبود.'},502);
+    return json({ok:true,request_id:row.request_id,reference_code:row.reference_code},201);
+  }catch(e){return json({message:e instanceof ApiError?e.message:'ثبت درخواست انجام نشد.'},e instanceof ApiError?e.status:502)}
 }
 
 export default {
   async fetch(request, env) {
+    const routed=await platformRoute(request,env);
+    if(routed)return routed;
     const url = new URL(request.url);
     const method = request.method.toUpperCase();
     if (method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {

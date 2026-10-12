@@ -12,7 +12,7 @@ response = await worker.fetch(new Request('https://kimia-beauty-salon.test/api/h
 assert.deepEqual(await response.json(), { ok: true, booking_enabled: false });
 response = await worker.fetch(new Request('https://kimia-beauty-salon.test/api/bookings', {
   method: 'POST', headers: { 'content-type': 'application/json' },
-  body: JSON.stringify({ name: 'آزمایشی', phone: '۰۹۳۰۷۸۹۷۸۲۵', service: 'atelier', preferred_time: 'پنجشنبه عصر' }),
+  body: JSON.stringify({ name: 'آزمایشی', phone: '۰۹۳۰۷۸۹۷۸۲۵', service: 'atelier', consent: true, request_key: 'b408f53a-656c-44f3-b878-06ff0e0d67af', preferred_time: 'پنجشنبه عصر' }),
 }), env);
 assert.equal(response.status, 503, 'Booking must stay unconfigured until database secrets are present');
 response = await worker.fetch(new Request('https://kimia-beauty-salon.test/api/bookings', {

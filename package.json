@@ -1,0 +1,1 @@
+{"name":"kimia-beauty-salon","private":true,"type":"module","scripts":{"build":"bash scripts/build.sh","test":"node scripts/validate-artifact.mjs && node scripts/test-worker.mjs && node scripts/test-admin.mjs && node scripts/test-database.mjs"},"devDependencies":{"@electric-sql/pglite":"0.5.8"}}

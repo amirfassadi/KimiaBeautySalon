@@ -1,0 +1,28 @@
+[Unit]
+Description=Kimia Beauty Salon self-hosted web application
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=kimia
+Group=kimia
+WorkingDirectory=/opt/kimia/current
+EnvironmentFile=/etc/kimia/kimia.env
+ExecStart=/usr/bin/node /opt/kimia/current/server/index.js
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=15
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/kimia
+CapabilityBoundingSet=
+LockPersonality=true
+MemoryMax=768M
+TasksMax=128
+
+[Install]
+WantedBy=multi-user.target

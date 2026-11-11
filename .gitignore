@@ -3,6 +3,8 @@ dist/
 dist-ssr/
 *.log
 *.local
+uploads/
+data/
 .idea/
 .DS_Store
 .env

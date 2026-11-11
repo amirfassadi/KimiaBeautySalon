@@ -42,7 +42,7 @@ function secureHeaders(headers = {}) {
   };
 }
 function configReady(env) {
-  return Boolean(env.SUPABASE_URL && env.SUPABASE_SECRET_KEY && env.RATE_LIMIT_SALT);
+  return Boolean(env.DB_ADAPTER || (env.SUPABASE_URL && env.SUPABASE_SECRET_KEY && env.RATE_LIMIT_SALT));
 }
 
 async function createBooking(request, env) {

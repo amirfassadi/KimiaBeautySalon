@@ -6,17 +6,20 @@
   "scripts": {
     "dev": "vite",
     "build": "node scripts/build-worker.mjs",
+    "start": "node server/index.js",
+    "db:migrate": "node server/migrate.js",
+    "admin:create": "node server/bootstrap-admin.js",
+    "test:postgres": "npm run build && node scripts/test-postgres-integration.mjs",
     "preview": "vite --host 0.0.0.0",
     "lint": "tsc --noEmit",
-    "test": "node scripts/validate-artifact.mjs && node scripts/test-worker.mjs && node scripts/test-admin.mjs && node scripts/test-launch-content.mjs && node scripts/test-database.mjs && node scripts/test-auth.mjs"
+    "test": "node scripts/validate-artifact.mjs && node scripts/test-worker.mjs && node scripts/test-admin.mjs && node scripts/test-launch-content.mjs && node scripts/test-database.mjs && node scripts/test-auth.mjs && node scripts/test-self-hosted.mjs"
   },
   "dependencies": {
-
+    "pg": "^8.23.1"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.8",
     "@types/node": "^22.14.0",
-    
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }

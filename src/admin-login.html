@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>ورود مدیر | کیمیا</title>
+  <style>
+    @font-face{font-family:Estedad;src:url('/fonts/Estedad-wght.woff2') format('woff2');font-weight:100 900;font-display:swap}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:#070f0c;color:#f5f0e7;font:16px/1.9 Estedad,Tahoma,sans-serif}
+    main{width:min(100%,440px);padding:32px;background:#10271d;border:1px solid rgba(216,182,117,.3)}
+    h1{margin-top:0;color:#d8b675;font-size:26px}label{display:block;margin:18px 0 6px}
+    input{width:100%;padding:12px;border:1px solid #dcd1c2;border-radius:2px;background:#faf6f0;color:#201c16;font:inherit}
+    button{margin-top:24px;padding:12px 24px;border:0;background:#d8b675;color:#10271d;font:600 16px Estedad,sans-serif;cursor:pointer}
+    [role=status]{min-height:28px;color:#f1b6a8}.status-ok{color:#c6dfbd}a{color:#d8b675}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>ورود مدیریت کیمیا</h1>
+    <p>با حساب مدیریتی که از طریق ابزار امن سرور ایجاد شده وارد شوید.</p>
+    <form id="loginForm">
+      <label for="email">ایمیل مدیر</label>
+      <input id="email" name="email" type="email" autocomplete="username" required maxlength="254" dir="ltr">
+      <label for="password">گذرواژه</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024" dir="ltr">
+      <button type="submit">ورود امن</button>
+      <p id="status" role="status" aria-live="polite"></p>
+    </form>
+  </main>
+  <script>
+    const form=document.getElementById('loginForm'),status=document.getElementById('status');
+    form.addEventListener('submit',async event=>{event.preventDefault();status.textContent='در حال بررسی…';const button=form.querySelector('button');button.disabled=true;try{const response=await fetch('/api/admin-auth/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:form.elements.email.value,password:form.elements.password.value})});const result=await response.json();if(!response.ok)throw new Error(result.message||'ورود انجام نشد.');location.assign('/admin')}catch(error){status.textContent=error.message;status.classList.remove('status-ok')}finally{button.disabled=false}});
+  </script>
+</body>
+</html>

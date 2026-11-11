@@ -1,5 +1,7 @@
 # Kimia operations and database activation
 
+> این صفحه تنظیمات مسیر میزبانی موجود Sites/PostgREST را شرح می‌دهد. برای استقرار مستقل جدید روی VPS، به [راهنمای self-hosting](./SELF_HOSTING.md) و [گزارش وضعیت](./SELF_HOSTING_REPORT.md) مراجعه کنید. دستورهای این بخش به‌تنهایی VPS را راه‌اندازی نمی‌کنند.
+
 ## Implemented
 
 - Black, forest green and gold Persian RTL website, server-rendered service pages, canonical URLs, descriptions, Open Graph, BeautySalon/Service structured data, sitemap and crawler rules.
@@ -23,7 +25,7 @@ For Supabase PostgreSQL:
 
 Sites auto-provisions the R2 binding on deployment. R2 stores file bytes; PostgreSQL stores gallery metadata and booking records. Pending uploads not attached to gallery or logo are private orphan files; garbage collection is not automated in this version. Current admin lists are capped at the latest 200 records; pagination is a follow-up before higher-volume use.
 
-A plain PostgreSQL VPS deployment requires a trusted server API or PostgREST bridge because the Sites Worker cannot make a raw TCP PostgreSQL connection. Do not expose port 5432 to the public to connect this Worker. We have not deployed or accessed the user's VPS in this task.
+A Sites Worker cannot make a raw TCP PostgreSQL connection; do not expose port 5432 to the public to connect that Worker. A separate self-hosted Node adapter is now prepared for VPS operation; it binds locally and connects to PostgreSQL using `DATABASE_URL`. Its code has not been installed or accepted on the user's VPS, and it does not automatically transfer Supabase data or R2 image bytes.
 
 ## Crawlers and release
 

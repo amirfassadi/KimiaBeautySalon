@@ -1,0 +1,11 @@
+node_modules
+dist/
+dist-ssr/
+*.log
+*.local
+.idea/
+.DS_Store
+.env
+.env.*
+!.env.example
+.openai/*.tar.gz

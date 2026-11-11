@@ -1,0 +1,22 @@
+{
+  "name": "kimiabeautysalon",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/build-worker.mjs",
+    "preview": "vite --host 0.0.0.0",
+    "test": "node scripts/validate-artifact.mjs && node scripts/test-worker.mjs && node scripts/test-admin.mjs && node scripts/test-database.mjs"
+  },
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "@types/node": "^22.14.0",
+    
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "defaultLocale": "fa",
+  "supportedLocales": [
+    "fa",
+    "en"
+  ],
+  "businessProfile": {
+    "name": {
+      "fa": "سالن زیبایی کیمیا",
+      "en": "Kimia Beauty"
+    },
+    "description": {
+      "fa": "فضایی برای زیبایی، آرامش و رسیدگی به خود. فهرست خدمات پس از تأیید سالن در این صفحه منتشر می‌شود.",
+      "en": "A space for beauty and care. The service catalog will appear here once confirmed by the salon."
+    },
+    "phone": "09129342148",
+    "email": "",
+    "address": {
+      "fa": "",
+      "en": ""
+    },
+    "socialUrl": "https://www.instagram.com/kb.kimiabeauty/"
+  },
+  "serviceCatalog": []
+}

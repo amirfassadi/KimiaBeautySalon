@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#29221e" />
+    <meta name="description" content="وب‌سایت سالن زیبایی کیمیا" />
+    <title>کیمیا | سالن زیبایی</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+    <script type="module" src="./assets/app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">رفتن به محتوا</a>
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="Kimia Beauty">
+        <span class="brand-mark" aria-hidden="true">K</span>
+        <span class="brand-wordmark">KIMIA <small>BEAUTY</small></span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#about" data-i18n="navAbout"></a>
+        <a href="#services" data-i18n="navServices"></a>
+        <a href="#contact" data-i18n="navContact"></a>
+      </nav>
+      <button id="locale-switch" class="locale-switch" type="button" aria-label="Change language">EN</button>
+    </header>
+
+    <main id="main">
+      <section id="home" class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow" data-i18n="eyebrow"></p>
+          <h1 data-i18n="heroTitle"></h1>
+          <p class="hero-description" data-i18n="heroDescription"></p>
+          <a class="button" href="#services" data-i18n="exploreServices"></a>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="art-orbit"></div><div class="art-sun"></div>
+          <span class="art-word">K</span><span class="art-caption">KIMIA BEAUTY</span>
+        </div>
+      </section>
+
+      <section id="about" class="section about-section">
+        <div><p class="eyebrow" data-i18n="aboutEyebrow"></p><h2 data-i18n="aboutTitle"></h2></div>
+        <p id="about-description" class="section-description"></p>
+      </section>
+
+      <section id="services" class="section services-section">
+        <div class="section-heading">
+          <div><p class="eyebrow" data-i18n="servicesEyebrow"></p><h2 data-i18n="servicesTitle"></h2></div>
+          <p data-i18n="servicesNote"></p>
+        </div>
+        <div id="service-list" class="service-list" aria-live="polite"></div>
+      </section>
+
+      <section id="contact" class="section contact-section">
+        <div><p class="eyebrow" data-i18n="contactEyebrow"></p><h2 data-i18n="contactTitle"></h2><p data-i18n="contactDescription"></p></div>
+        <div id="contact-details" class="contact-details"></div>
+      </section>
+    </main>
+    <footer class="site-footer"><span>© <span id="year"></span> Kimia Beauty</span><span data-i18n="footer"></span></footer>
+  </body>
+</html>

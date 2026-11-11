@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "node scripts/build-worker.mjs",
     "preview": "vite --host 0.0.0.0",
+    "lint": "tsc --noEmit",
     "test": "node scripts/validate-artifact.mjs && node scripts/test-worker.mjs && node scripts/test-admin.mjs && node scripts/test-database.mjs"
   },
   "dependencies": {

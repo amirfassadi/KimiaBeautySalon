@@ -74,6 +74,13 @@ export function kimiaPreview() {
           const response = await worker.fetch(request, {});
           const responseHeaders = Object.fromEntries(response.headers.entries());
           responseHeaders['cache-control'] = 'no-store';
+          // In development preview adapter, allow embedding inside AI Studio preview iframe.
+          // Production Worker retains strict DENY / frame-ancestors 'none'.
+          delete responseHeaders['x-frame-options'];
+          if (responseHeaders['content-security-policy']) {
+            responseHeaders['content-security-policy'] = responseHeaders['content-security-policy']
+              .replace(/frame-ancestors\s+'none'/g, 'frame-ancestors *');
+          }
           let body = Buffer.from(await response.arrayBuffer());
           if (responseHeaders['content-type']?.includes('text/html')) {
             body = Buffer.from(await server.transformIndexHtml(url.pathname, body.toString('utf8')));

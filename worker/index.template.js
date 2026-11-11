@@ -5,6 +5,7 @@ const MEDIA_BASE64 = {
   "/media/atelier.webp": __HERO_BASE64__,
   "/media/portrait.webp": __PORTRAIT_BASE64__,
   "/media/session.webp": __SESSION_BASE64__,
+  "/fonts/Estedad-wght.woff2": __FONT_ESTEDAD_BASE64__,
 };
 const SERVICES = new Set(["makeup", "hair", "nails", "eyes", "skin", "atelier"]);
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff" };
@@ -36,7 +37,7 @@ function secureHeaders(headers = {}) {
     "referrer-policy": "strict-origin-when-cross-origin",
     "x-frame-options": "DENY",
     "permissions-policy": "camera=(), microphone=(), geolocation=()",
-    "content-security-policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; script-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+    "content-security-policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; script-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
   };
 }
 function configReady(env) {
@@ -91,9 +92,10 @@ export default {
     if (method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {
       return new Response(PAGE_HTML, { headers: secureHeaders({ "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" }) });
     }
-    if (method === "GET" && Object.hasOwn(MEDIA_BASE64, url.pathname)) {
+    if (["GET", "HEAD"].includes(method) && Object.hasOwn(MEDIA_BASE64, url.pathname)) {
       const bytes = Uint8Array.from(atob(MEDIA_BASE64[url.pathname]), (char) => char.charCodeAt(0));
-      return new Response(bytes, { headers: secureHeaders({ "content-type": "image/webp", "cache-control": "public, max-age=31536000, immutable" }) });
+      const mime = url.pathname.endsWith(".woff2") ? "font/woff2" : "image/webp";
+      return new Response(bytes, { headers: secureHeaders({ "content-type": mime, "cache-control": "public, max-age=31536000, immutable" }) });
     }
     if (url.pathname === "/api/health" && method === "GET") {
       return json({ ok: true, booking_enabled: configReady(env) });

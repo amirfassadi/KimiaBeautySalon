@@ -8,8 +8,17 @@
 <title>سالن زیبایی کیمیا | Kimia Beauty & Atelier</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <style>
+@font-face {
+  font-family: 'Estedad';
+  src: url('/fonts/Estedad-wght.woff2') format('woff2-variations'),
+       url('/fonts/Estedad-wght.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad%5Bwght%5D.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 :root{
   --bg-dark:#070f0c;
   --bg-dark-surface:#0d1a14;
@@ -30,7 +39,7 @@
   --line-gold:rgba(216,182,117,0.28);
   --line-ivory:#dfd3c3;
   --serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
-  --sans:'Vazirmatn',-apple-system,BlinkMacSystemFont,Tahoma,sans-serif;
+  --sans:'Estedad',-apple-system,BlinkMacSystemFont,Tahoma,sans-serif;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;overflow-x:hidden}
@@ -39,9 +48,10 @@ body{
   overflow-x:hidden;
   background:var(--bg-dark);
   color:var(--text-light);
-  font:400 15px/1.95 var(--sans);
+  font:400 16px/1.95 var(--sans);
   text-rendering:optimizeLegibility;
   -webkit-font-smoothing:antialiased;
+  letter-spacing:normal;
 }
 a{color:inherit;text-decoration:none}
 button,input,select,textarea{font:inherit}
@@ -72,10 +82,10 @@ section[id]{scroll-margin-top:40px}
   left:0;
   right:0;
   z-index:50;
-  background:rgba(7,15,12,0.85);
+  background:rgba(7,15,12,0.88);
   backdrop-filter:blur(18px);
   -webkit-backdrop-filter:blur(18px);
-  border-bottom:1px solid var(--border-dark, rgba(216,182,117,0.18));
+  border-bottom:1px solid var(--line-gold);
   transition:background .3s;
 }
 .nav{
@@ -83,6 +93,7 @@ section[id]{scroll-margin-top:40px}
   display:flex;
   align-items:center;
   justify-content:space-between;
+  gap:16px;
 }
 .brand{
   display:flex;
@@ -105,7 +116,6 @@ section[id]{scroll-margin-top:40px}
 .brand-name{
   font-weight:600;
   font-size:17px;
-  letter-spacing:-0.02em;
   color:var(--text-light);
 }
 .brand-en{
@@ -118,8 +128,8 @@ section[id]{scroll-margin-top:40px}
 .nav-links{
   display:flex;
   align-items:center;
-  gap:32px;
-  font-size:13.5px;
+  gap:26px;
+  font-size:14px;
   color:#ece4d5;
 }
 .nav-links a{
@@ -127,6 +137,7 @@ section[id]{scroll-margin-top:40px}
   transition:color .2s, opacity .2s;
   padding:4px 0;
   position:relative;
+  font-weight:500;
 }
 .nav-links a:hover{
   color:var(--gold);
@@ -144,6 +155,27 @@ section[id]{scroll-margin-top:40px}
   transition:transform .25s ease;
 }
 .nav-links a:hover:after{transform:scaleX(1)}
+.nav-actions-group{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.nav-auth-btn{
+  background:transparent;
+  border:1px solid rgba(216,182,117,0.45);
+  color:var(--text-light);
+  padding:9px 18px;
+  font-size:13.5px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .2s;
+  border-radius:1px;
+}
+.nav-auth-btn:hover{
+  background:rgba(216,182,117,0.12);
+  border-color:var(--gold);
+  color:var(--gold-hover);
+}
 .nav-action{
   border:1px solid var(--gold);
   padding:10px 22px;
@@ -152,9 +184,8 @@ section[id]{scroll-margin-top:40px}
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  font-size:13px;
+  font-size:13.5px;
   font-weight:600;
-  letter-spacing:-0.01em;
   transition:background .25s, transform .2s, box-shadow .2s;
   border-radius:1px;
 }
@@ -185,7 +216,7 @@ section[id]{scroll-margin-top:40px}
   align-items:center;
   justify-content:center;
   gap:8px;
-  font-size:14px;
+  font-size:14.5px;
   font-weight:600;
   transition:all .25s;
   border-radius:1px;
@@ -255,7 +286,6 @@ h1,h2,h3,p{margin-top:0}
   font-size:clamp(44px,6.8vw,82px);
   font-weight:500;
   line-height:1.32;
-  letter-spacing:-0.035em;
   margin:12px 0 20px;
   color:var(--text-light);
 }
@@ -282,7 +312,7 @@ h1,h2,h3,p{margin-top:0}
   padding-top:28px;
   border-top:1px solid rgba(255,255,255,0.1);
   color:#bfb4a1;
-  font-size:13px;
+  font-size:13.5px;
   display:flex;
   gap:26px;
   flex-wrap:wrap;
@@ -323,7 +353,7 @@ h1,h2,h3,p{margin-top:0}
 }
 .philosophy-quote{
   font-size:clamp(22px,2.6vw,32px);
-  font-weight:400;
+  font-weight:500;
   line-height:1.75;
   color:var(--text-light);
   border-right:3px solid var(--gold);
@@ -335,7 +365,7 @@ h1,h2,h3,p{margin-top:0}
 }
 .philosophy-text{
   color:var(--text-light-muted);
-  font-size:14.5px;
+  font-size:15px;
   line-height:2.1;
 }
 
@@ -356,8 +386,7 @@ h1,h2,h3,p{margin-top:0}
 .section-title{
   font-size:clamp(30px,4.2vw,48px);
   line-height:1.4;
-  font-weight:500;
-  letter-spacing:-0.03em;
+  font-weight:600;
   margin:6px 0 14px;
 }
 .section-intro{
@@ -430,7 +459,7 @@ h1,h2,h3,p{margin-top:0}
   color:var(--text-dark);
 }
 .service p{
-  font-size:13.5px;
+  font-size:14px;
   line-height:1.95;
   color:var(--text-dark-muted);
   margin:0 0 24px;
@@ -444,11 +473,12 @@ h1,h2,h3,p{margin-top:0}
   border-top:1px solid #e7ded2;
 }
 .service-detail-link{
-  font-size:12.5px;
+  font-size:13px;
   color:#73562a;
   text-decoration:none;
   border-bottom:1px solid transparent;
   transition:border-color .2s;
+  font-weight:500;
 }
 .service-detail-link:hover{border-color:#73562a}
 .service-choice{
@@ -458,7 +488,7 @@ h1,h2,h3,p{margin-top:0}
   padding:0;
   cursor:pointer;
   font-weight:600;
-  font-size:13px;
+  font-size:13.5px;
   transition:color .2s, transform .2s;
 }
 .service-choice:hover{
@@ -526,7 +556,7 @@ h1,h2,h3,p{margin-top:0}
 }
 .atelier-copy h2{
   font-size:clamp(32px,4.4vw,52px);
-  font-weight:500;
+  font-weight:600;
   line-height:1.45;
   margin:14px 0 18px;
 }
@@ -542,7 +572,7 @@ h1,h2,h3,p{margin-top:0}
   grid-template-columns:1fr 1fr;
   gap:16px 24px;
   margin:32px 0 38px;
-  font-size:13.5px;
+  font-size:14px;
   color:#ede3d2;
 }
 .atelier-points span{
@@ -569,7 +599,7 @@ h1,h2,h3,p{margin-top:0}
   gap:30px;
 }
 .portfolio-note{
-  font-size:13px;
+  font-size:13.5px;
   color:var(--text-light-muted);
   max-width:460px;
   line-height:1.9;
@@ -611,10 +641,9 @@ h1,h2,h3,p{margin-top:0}
   backdrop-filter:blur(6px);
   color:var(--gold);
   border:1px solid rgba(216,182,117,0.4);
-  font-size:11px;
+  font-size:11.5px;
   padding:4px 10px;
   border-radius:1px;
-  letter-spacing:0.02em;
 }
 .portfolio-card span{
   position:absolute;
@@ -622,7 +651,7 @@ h1,h2,h3,p{margin-top:0}
   right:22px;
   bottom:20px;
   color:var(--text-light);
-  font-size:14px;
+  font-size:14.5px;
   font-weight:500;
 }
 .gallery-open{
@@ -669,8 +698,6 @@ h1,h2,h3,p{margin-top:0}
   margin-top:48px;
 }
 .journey article{
-  border-top:2px solid #caa972;
-  padding-top:28px;
   background:#ffffff;
   padding:32px 28px;
   border:1px solid #e3d8c8;
@@ -691,7 +718,7 @@ h1,h2,h3,p{margin-top:0}
 }
 .journey p{
   color:var(--text-dark-muted);
-  font-size:14px;
+  font-size:14.5px;
   line-height:2.05;
   margin:0;
 }
@@ -707,7 +734,7 @@ h1,h2,h3,p{margin-top:0}
 .booking h2{
   font-size:clamp(32px,4vw,46px);
   line-height:1.35;
-  font-weight:500;
+  font-weight:600;
   margin:8px 0 16px;
   color:var(--text-dark);
 }
@@ -719,7 +746,7 @@ h1,h2,h3,p{margin-top:0}
 }
 .booking-copy p{
   color:var(--text-dark-muted);
-  font-size:15px;
+  font-size:15.5px;
   line-height:2.1;
   max-width:440px;
 }
@@ -732,13 +759,13 @@ h1,h2,h3,p{margin-top:0}
 }
 .booking-contact-card h4{
   margin:0 0 8px;
-  font-size:15px;
+  font-size:15.5px;
   font-weight:600;
   color:#755627;
 }
 .booking-contact-card p{
   margin:0 0 14px;
-  font-size:13px;
+  font-size:13.5px;
   color:var(--text-dark-muted);
   line-height:1.9;
 }
@@ -779,7 +806,7 @@ h1,h2,h3,p{margin-top:0}
   padding-bottom:18px;
   margin-bottom:10px;
   gap:12px;
-  font-size:12.5px;
+  font-size:13px;
 }
 .booking-progress span{
   opacity:0.45;
@@ -794,7 +821,7 @@ h1,h2,h3,p{margin-top:0}
 }
 .booking-availability{
   grid-column:1/-1;
-  font-size:12.5px;
+  font-size:13px;
   color:#7c6544;
   background:#f9f5ed;
   border:1px solid #e4d7c3;
@@ -825,7 +852,7 @@ h1,h2,h3,p{margin-top:0}
   display:flex;
   flex-direction:column;
   gap:6px;
-  font-size:12.5px;
+  font-size:13px;
   color:#594f42;
   font-weight:500;
 }
@@ -837,7 +864,7 @@ h1,h2,h3,p{margin-top:0}
   padding:12px 14px;
   border-radius:1px;
   min-width:0;
-  font-size:14px;
+  font-size:16px;
   outline:none;
   transition:border-color .2s, background .2s, box-shadow .2s;
 }
@@ -853,7 +880,7 @@ h1,h2,h3,p{margin-top:0}
 .booking-info{
   grid-column:1/-1;
   color:#7a6f60;
-  font-size:12px;
+  font-size:12.5px;
   line-height:1.9;
   margin:4px 0 0;
 }
@@ -863,13 +890,13 @@ h1,h2,h3,p{margin-top:0}
   border:1px solid #e4d7c3;
   padding:20px;
   white-space:pre-line;
-  font-size:13.5px;
+  font-size:14px;
   line-height:2.1;
   color:#3c3328;
 }
 .consent{
   grid-column:1/-1;
-  font-size:12.5px;
+  font-size:13px;
   color:#564c3e;
   display:flex;
   gap:12px;
@@ -911,7 +938,7 @@ h1,h2,h3,p{margin-top:0}
 }
 .form-status{
   grid-column:1/-1;
-  font-size:13px;
+  font-size:13.5px;
   color:#73562a;
   min-height:24px;
   padding-top:4px;
@@ -961,7 +988,7 @@ h1,h2,h3,p{margin-top:0}
 }
 .faq-list p{
   color:var(--text-light-muted);
-  font-size:14px;
+  font-size:14.5px;
   line-height:2.05;
   margin:16px 0 4px;
 }
@@ -1027,7 +1054,7 @@ h1,h2,h3,p{margin-top:0}
   margin-bottom:4px;
 }
 .contact-item span,.contact-item a{
-  font-size:14.5px;
+  font-size:15px;
   color:var(--text-light);
   line-height:1.8;
 }
@@ -1063,14 +1090,14 @@ h1,h2,h3,p{margin-top:0}
 }
 .map-box p{
   color:var(--text-light-muted);
-  font-size:13.5px;
+  font-size:14px;
   max-width:360px;
   line-height:1.9;
   margin-bottom:18px;
 }
 .map-link{
   color:var(--gold);
-  font-size:13px;
+  font-size:13.5px;
   font-weight:600;
   text-decoration:underline;
   text-underline-offset:4px;
@@ -1082,7 +1109,7 @@ h1,h2,h3,p{margin-top:0}
   border-top:1px solid var(--line-dark);
   padding:36px 0;
   color:#9a9081;
-  font-size:12.5px;
+  font-size:13px;
 }
 .footer-inner{
   display:flex;
@@ -1144,10 +1171,258 @@ h1,h2,h3,p{margin-top:0}
   color:#000;
 }
 .gallery-dialog p{
-  font-size:12.5px;
+  font-size:13px;
   color:var(--text-light-muted);
   margin:16px 0 0;
   text-align:center;
+}
+
+/* Customer Account Modal Dialog */
+.account-dialog{
+  background:transparent;
+  border:0;
+  padding:0;
+  max-width:min(520px,94vw);
+  width:100%;
+}
+.account-dialog::backdrop{
+  background:rgba(7,15,12,0.86);
+  backdrop-filter:blur(8px);
+}
+.account-dialog-shell{
+  background:var(--bg-dark-surface);
+  color:var(--text-light);
+  border:1px solid var(--line-gold);
+  padding:36px clamp(20px,5vw,36px) 28px;
+  box-shadow:0 24px 70px rgba(0,0,0,0.7);
+  border-radius:2px;
+  position:relative;
+}
+.account-dialog-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--line-dark);
+  padding-bottom:18px;
+  margin-bottom:20px;
+}
+.account-dialog-brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.account-brand-mark{
+  width:36px;
+  height:36px;
+  border:1px solid var(--gold);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font:italic 20px/1 var(--serif);
+  color:var(--gold);
+  background:radial-gradient(circle at 35% 35%, rgba(216,182,117,0.18) 0%, transparent 70%);
+}
+.account-brand-title{
+  font-weight:600;
+  font-size:15px;
+  display:block;
+}
+.account-brand-en{
+  color:#c8b898;
+  font:400 10.5px/1.2 var(--serif);
+  letter-spacing:0.18em;
+  direction:ltr;
+  display:block;
+}
+.account-close-btn{
+  background:transparent;
+  border:1px solid rgba(216,182,117,0.3);
+  color:var(--text-light);
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+  transition:all .2s;
+}
+.account-close-btn:hover{
+  background:rgba(216,182,117,0.2);
+  color:var(--gold);
+}
+.account-offline-notice{
+  background:#14291f;
+  border:1px solid rgba(216,182,117,0.25);
+  padding:12px 14px;
+  border-radius:1px;
+  margin-bottom:18px;
+  font-size:13px;
+  line-height:1.8;
+  color:#ded4c3;
+}
+.notice-badge{
+  display:inline-block;
+  background:#caa972;
+  color:#12100c;
+  font-size:11px;
+  font-weight:600;
+  padding:2px 8px;
+  border-radius:1px;
+  margin-left:8px;
+}
+.dev-preview-bar{
+  background:rgba(0,0,0,0.35);
+  border:1px dashed rgba(216,182,117,0.35);
+  padding:10px 12px;
+  margin-bottom:20px;
+  font-size:12px;
+}
+.dev-preview-label{
+  display:block;
+  color:var(--gold);
+  font-weight:500;
+  margin-bottom:6px;
+}
+.dev-preview-chips{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.dev-chip{
+  background:#14231a;
+  border:1px solid rgba(216,182,117,0.3);
+  color:#d4cbba;
+  font-size:11.5px;
+  padding:4px 10px;
+  cursor:pointer;
+  border-radius:1px;
+}
+.dev-chip.active{
+  background:var(--gold);
+  color:#12100c;
+  font-weight:600;
+  border-color:var(--gold);
+}
+.account-title{
+  font-size:21px;
+  font-weight:600;
+  color:var(--text-light);
+  margin:0 0 8px;
+}
+.account-subtitle{
+  font-size:13.5px;
+  line-height:1.9;
+  color:var(--text-light-muted);
+  margin:0 0 20px;
+}
+.account-field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:13px;
+  color:#ded5c5;
+  font-weight:500;
+  margin-bottom:14px;
+}
+.account-field input{
+  border:1px solid #c2b5a1;
+  background:#fcfaf6;
+  color:#1f1b15;
+  padding:12px 14px;
+  border-radius:1px;
+  font-size:16px;
+  outline:none;
+  transition:border-color .2s, box-shadow .2s;
+}
+.account-field input:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(216,182,117,0.22);
+}
+.account-field-hint{
+  font-size:12px;
+  color:#a89f90;
+  line-height:1.7;
+  margin:-8px 0 16px;
+}
+.account-actions{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:20px;
+}
+.account-primary-btn{
+  width:100%;
+  min-height:48px;
+  font-size:15px;
+}
+.account-tel-btn{
+  width:100%;
+  min-height:44px;
+  font-size:13.5px;
+  direction:ltr;
+}
+.account-text-btn{
+  background:none;
+  border:0;
+  color:var(--gold);
+  text-decoration:underline;
+  cursor:pointer;
+  padding:0 6px;
+  font-size:13px;
+}
+.account-text-btn:hover{color:var(--gold-hover)}
+.account-status{
+  font-size:13px;
+  min-height:22px;
+  margin-top:12px;
+  line-height:1.8;
+  color:var(--gold);
+}
+.account-status.error{color:#ff9e8f}
+.account-row-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.account-consents{
+  margin:12px 0 18px;
+  padding:12px;
+  background:#12241b;
+  border:1px solid rgba(255,255,255,0.08);
+}
+.account-privacy-note{
+  font-size:12px;
+  line-height:1.8;
+  color:#c7bea9;
+  margin:0 0 8px;
+}
+.account-privacy-note a{
+  color:var(--gold);
+  text-decoration:underline;
+}
+.account-checkbox-label{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  font-size:12.5px;
+  color:#dad1be;
+  line-height:1.7;
+  cursor:pointer;
+}
+.account-checkbox-label input{
+  margin-top:4px;
+  accent-color:var(--gold);
+  cursor:pointer;
+}
+.account-dialog-footer{
+  margin-top:22px;
+  padding-top:14px;
+  border-top:1px solid var(--line-dark);
+  text-align:center;
+  font-size:11.5px;
+  color:#8a8070;
 }
 
 /* Responsive Media Queries */
@@ -1181,7 +1456,7 @@ h1,h2,h3,p{margin-top:0}
     box-shadow:0 16px 40px rgba(0,0,0,0.6);
   }
   .nav-links.open{display:flex}
-  .nav-action{display:none}
+  .nav-actions-group{display:none}
   .mobile-toggle{display:block}
   .hero{
     min-height:720px;
@@ -1205,7 +1480,7 @@ h1,h2,h3,p{margin-top:0}
   .booking-form-box{padding:28px 18px}
   .booking-step{grid-template-columns:1fr}
   .field.full,.booking-form button,.form-status{grid-column:1}
-  .booking-progress{font-size:11px}
+  .booking-progress{font-size:11.5px}
   .tracking-form{grid-template-columns:1fr}
   .contact-details{grid-template-columns:1fr}
   .mobile-bar{
@@ -1222,7 +1497,7 @@ h1,h2,h3,p{margin-top:0}
     -webkit-backdrop-filter:blur(14px);
   }
   .mobile-bar>a:first-child{
-    font-size:13.5px;
+    font-size:14px;
     font-weight:600;
     color:var(--gold);
     display:flex;
@@ -1234,6 +1509,21 @@ h1,h2,h3,p{margin-top:0}
     font-size:13px;
   }
   body{padding-bottom:74px}
+
+  /* Account dialog mobile bottom sheet */
+  .account-dialog{
+    margin:auto 0 0 0;
+    max-width:100vw;
+    width:100%;
+    border-radius:12px 12px 0 0;
+  }
+  .account-dialog-shell{
+    border-radius:12px 12px 0 0;
+    max-height:88vh;
+    overflow-y:auto;
+    padding:28px 20px 24px;
+  }
+  .account-row-2{grid-template-columns:1fr}
 }
 
 @media(max-width:390px){
@@ -1268,8 +1558,12 @@ __SEO_HEAD__</head>
       <a href="#experience">مسیر تجربه</a>
       <a href="#tracking">پیگیری نوبت</a>
       <a href="#contact">تماس و نشانی</a>
+      <button type="button" class="nav-auth-btn" id="mobileAccountLink" style="display:none;margin-top:6px">ورود / ثبت‌نام مشتریان</button>
     </nav>
-    <a class="nav-action" href="#booking">هماهنگی نوبت</a>
+    <div class="nav-actions-group">
+      <button type="button" class="nav-auth-btn" id="openAccountBtn" aria-haspopup="dialog" aria-controls="accountDialog">ورود / ثبت‌نام</button>
+      <a class="nav-action" href="#booking">هماهنگی نوبت</a>
+    </div>
     <button class="mobile-toggle" id="mobileToggle" aria-controls="navLinks" aria-expanded="false" aria-label="باز کردن منو">☰</button>
   </div>
 </header>
@@ -1685,6 +1979,113 @@ __SEO_HEAD__</head>
   <p>تصویر مفهومی طراحی؛ نمونه‌کار واقعی سالن نیست.</p>
 </dialog>
 
+<!-- Accessible Customer Registration & Login Dialog -->
+<dialog class="account-dialog" id="accountDialog" aria-labelledby="accountDialogTitle" aria-modal="true">
+  <div class="account-dialog-shell">
+    <div class="account-dialog-header">
+      <div class="account-dialog-brand">
+        <span class="account-brand-mark">K</span>
+        <div>
+          <span class="account-brand-title">کیمیا · حساب مشتریان</span>
+          <small class="account-brand-en">KIMIA CUSTOMER ACCOUNT</small>
+        </div>
+      </div>
+      <button type="button" class="account-close-btn" id="closeAccount" aria-label="بستن پنجره">×</button>
+    </div>
+
+    <!-- Offline Preview Banner -->
+    <div class="account-offline-notice" role="status">
+      <span class="notice-badge">پیش‌نمایش آنلاین</span>
+      <span>ورود و ثبت‌نام آنلاین به‌زودی فعال می‌شود؛ برای هماهنگی نوبت یا پیگیری، با سالن تماس بگیر.</span>
+    </div>
+
+    <!-- Development Visual Preview Stage Switcher (Explicitly Labeled) -->
+    <div class="dev-preview-bar" aria-label="بررسی طراحی گام‌ها">
+      <span class="dev-preview-label">پیش‌نمایش بصری گام‌های ورود و عضویت:</span>
+      <div class="dev-preview-chips">
+        <button type="button" class="dev-chip active" data-preview-stage="phone">۱. شماره موبایل</button>
+        <button type="button" class="dev-chip" data-preview-stage="otp">۲. کد تأیید</button>
+        <button type="button" class="dev-chip" data-preview-stage="register">۳. تکمیل مشخصات</button>
+      </div>
+    </div>
+
+    <!-- STAGE 1: Phone Number -->
+    <form id="accountPhoneForm" class="account-stage" data-stage="phone" novalidate>
+      <h2 id="accountDialogTitle" class="account-title">به کیمیا خوش آمدی</h2>
+      <p class="account-subtitle">برای مشاهده نوبت‌ها، سوابق زیبایی و هماهنگی جلسات آتلیه، شمارهٔ موبایل خود را وارد کن.</p>
+      
+      <label class="account-field">
+        <span>شمارهٔ موبایل</span>
+        <input type="tel" name="account_phone" id="accountPhoneInput" required inputmode="tel" autocomplete="tel" dir="ltr" maxlength="20" placeholder="۰۹۱۲۳۴۵۶۷۸۹">
+      </label>
+      <p class="account-field-hint">ارقام فارسی، عربی و انگلیسی پذیرفته می‌شوند.</p>
+      
+      <div class="account-actions">
+        <button type="submit" class="button account-primary-btn" id="sendOtpBtn">دریافت کد تأیید</button>
+        <a class="button outline account-tel-btn" href="tel:+989307897825">تماس برای هماهنگی: ۰۹۳۰ ۷۸۹ ۷۸۲۵</a>
+      </div>
+      <div class="account-status" id="phoneStatus" role="status" aria-live="polite"></div>
+    </form>
+
+    <!-- STAGE 2: Verification Code -->
+    <form id="accountOtpForm" class="account-stage" data-stage="otp" hidden novalidate>
+      <h2 class="account-title">کد تأیید را وارد کن</h2>
+      <p class="account-subtitle">
+        کد ارسال‌شده به شمارهٔ <strong id="destPhoneDisplay" dir="ltr">09...</strong> را بنویس.
+        <button type="button" class="account-text-btn" id="editPhoneBtn">ویرایش شماره</button>
+      </p>
+
+      <label class="account-field">
+        <span>کد تأیید ۶ رقمی</span>
+        <input type="text" name="otp_code" id="otpCodeInput" required autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]{5,6}" maxlength="6" dir="ltr" placeholder="—— ——">
+      </label>
+      <p class="account-field-hint">کد یک‌بارمصرف ارسال‌شده از طریق پیامک به گوشی شما.</p>
+
+      <div class="account-actions">
+        <button type="submit" class="button account-primary-btn" id="verifyOtpBtn">تأیید و ورود</button>
+        <button type="button" class="button outline" id="resendOtpBtn" disabled>ارسال دوباره کد</button>
+      </div>
+      <div class="account-status" id="otpStatus" role="status" aria-live="polite"></div>
+    </form>
+
+    <!-- STAGE 3: Complete Profile (New Customer) -->
+    <form id="accountRegisterForm" class="account-stage" data-stage="register" hidden novalidate>
+      <h2 class="account-title">تکمیل مشخصات مشتری</h2>
+      <p class="account-subtitle">برای صدور شناسهٔ مشتری و ثبت نوبت‌ها، نام و نام خانوادگی خود را بنویس.</p>
+
+      <div class="account-row-2">
+        <label class="account-field">
+          <span>نام</span>
+          <input type="text" name="first_name" id="regFirstName" required minlength="2" maxlength="60" autocomplete="given-name" placeholder="نام">
+        </label>
+        <label class="account-field">
+          <span>نام خانوادگی</span>
+          <input type="text" name="last_name" id="regLastName" required minlength="2" maxlength="60" autocomplete="family-name" placeholder="نام خانوادگی">
+        </label>
+      </div>
+
+      <div class="account-consents">
+        <p class="account-privacy-note">
+          اطلاعات شما طبق <a href="/privacy" target="_blank">سیاست حریم خصوصی کیمیا</a> محافظت می‌شود.
+        </p>
+        <label class="account-checkbox-label">
+          <input type="checkbox" name="marketing_consent" id="marketingConsent">
+          <span>مایل به دریافت یادآوری‌ها و هماهنگی سالن و آتلیه هستم (اختیاری).</span>
+        </label>
+      </div>
+
+      <div class="account-actions">
+        <button type="submit" class="button account-primary-btn" id="completeRegBtn">تکمیل ثبت‌نام و ورود</button>
+      </div>
+      <div class="account-status" id="registerStatus" role="status" aria-live="polite"></div>
+    </form>
+
+    <div class="account-dialog-footer">
+      <span>کیمیا · سالن زیبایی و آتلیه عکاسی پرتره در صادقیه تهران</span>
+    </div>
+  </div>
+</dialog>
+
 <script>
 const menu=document.getElementById('mobileToggle'),nav=document.getElementById('navLinks');
 function closeMenu(){nav.classList.remove('open');menu.setAttribute('aria-expanded','false');menu.textContent='☰'}
@@ -1694,7 +2095,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 
 const form=document.getElementById('bookingForm'),statusBox=document.getElementById('formStatus'),steps=[...form.querySelectorAll('.booking-step')],next=document.getElementById('nextStep'),previous=document.getElementById('previousStep'),submit=document.getElementById('submitBooking'),call=document.getElementById('callBooking');let step=0,enabled=false,busy=false,requestKey=crypto.randomUUID();
 const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tehran',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());form.elements.date.min=today;
-const digits=v=>v.replace(/[۰-۹٠-٩]/g,d=>String('۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩'.indexOf(d)%10));
+const digits=v=>String(v??'').replace(/[۰-۹٠-٩]/g,d=>String('۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩'.indexOf(d)%10));
 
 function showStep(n,focus=true){
   step=n;
@@ -1838,6 +2239,7 @@ tracking.addEventListener('submit',async e=>{
   }
 });
 
+/* Gallery Dialog */
 const dialog=document.getElementById('galleryDialog');
 document.querySelectorAll('.gallery-open').forEach(button=>button.addEventListener('click',()=>{
   const source=button.parentElement.querySelector('img'),target=dialog.querySelector('img');
@@ -1850,6 +2252,190 @@ dialog.addEventListener('click',e=>{
   if(e.target===dialog){
     const r=dialog.getBoundingClientRect();
     if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();
+  }
+});
+
+/* Customer Account & Authentication Flow (Frontend Interface) */
+const customerAuthAdapter = {
+  isConfigured: () => false,
+  normalizePhone(val) {
+    const d = digits(val).replace(/[^0-9+]/g, '');
+    if (d.startsWith('0098')) return '+98' + d.slice(4);
+    if (d.startsWith('98')) return '+' + d;
+    if (d.startsWith('09')) return '+98' + d.slice(1);
+    if (d.startsWith('9') && d.length === 10) return '+98' + d;
+    return /^\+989[0-9]{9}$/.test(d) ? d : null;
+  },
+  async sendOtp(phone) {
+    // Proposed backend endpoint: POST /api/auth/otp/send
+    throw new Error('ورود و ثبت‌نام آنلاین به‌زودی فعال می‌شود؛ برای هماهنگی نوبت با سالن تماس بگیر.');
+  },
+  async verifyOtp(phone, code) {
+    // Proposed backend endpoint: POST /api/auth/otp/verify
+    throw new Error('احراز هویت آنلاین هنوز متصل نشده است.');
+  },
+  async completeRegistration(payload) {
+    // Proposed backend endpoint: POST /api/auth/register
+    throw new Error('ثبت مشخصات آنلاین در حال حاضر غیرفعال است.');
+  }
+};
+
+const accountDialog = document.getElementById('accountDialog');
+const closeAccountBtn = document.getElementById('closeAccount');
+const openAccountBtn = document.getElementById('openAccountBtn');
+const mobileAccountLink = document.getElementById('mobileAccountLink');
+let lastFocusedElement = null;
+let currentPhone = '';
+
+function setAccountStage(stageName) {
+  accountDialog.querySelectorAll('.account-stage').forEach(el => {
+    el.hidden = el.dataset.stage !== stageName;
+  });
+  accountDialog.querySelectorAll('.dev-chip').forEach(chip => {
+    chip.classList.toggle('active', chip.dataset.previewStage === stageName);
+  });
+  const firstInput = accountDialog.querySelector(`.account-stage[data-stage="${stageName}"] input:not([type=hidden])`);
+  if (firstInput) firstInput.focus();
+}
+
+function openAccountModal(triggerEl) {
+  lastFocusedElement = triggerEl || document.activeElement;
+  setAccountStage('phone');
+  document.getElementById('phoneStatus').textContent = '';
+  document.getElementById('otpStatus').textContent = '';
+  document.getElementById('registerStatus').textContent = '';
+  accountDialog.showModal();
+}
+
+function closeAccountModal() {
+  accountDialog.close();
+  if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+    lastFocusedElement.focus();
+  }
+}
+
+if (openAccountBtn) openAccountBtn.addEventListener('click', () => openAccountModal(openAccountBtn));
+if (mobileAccountLink) {
+  mobileAccountLink.style.display = 'block';
+  mobileAccountLink.addEventListener('click', () => {
+    closeMenu();
+    openAccountModal(mobileAccountLink);
+  });
+}
+closeAccountBtn.addEventListener('click', closeAccountModal);
+
+accountDialog.addEventListener('click', e => {
+  if (e.target === accountDialog) {
+    const r = accountDialog.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+      closeAccountModal();
+    }
+  }
+});
+
+/* Dev preview switcher for visual review of steps */
+accountDialog.querySelectorAll('.dev-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const target = chip.dataset.previewStage;
+    if (target === 'otp' && !currentPhone) {
+      currentPhone = '09307897825';
+      document.getElementById('destPhoneDisplay').textContent = currentPhone;
+    }
+    setAccountStage(target);
+  });
+});
+
+/* Stage 1: Phone submit */
+const phoneForm = document.getElementById('accountPhoneForm');
+const phoneStatus = document.getElementById('phoneStatus');
+phoneForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  phoneStatus.textContent = '';
+  phoneStatus.classList.remove('error');
+  const raw = phoneForm.elements.account_phone.value;
+  const normalized = customerAuthAdapter.normalizePhone(raw);
+  if (!normalized) {
+    phoneStatus.textContent = 'شمارهٔ موبایل معتبر وارد کن (مانند ۰۹۳۰۷۸۹۷۸۲۵).';
+    phoneStatus.classList.add('error');
+    phoneForm.elements.account_phone.focus();
+    return;
+  }
+  currentPhone = normalized;
+  document.getElementById('destPhoneDisplay').textContent = normalized;
+  const sendBtn = document.getElementById('sendOtpBtn');
+  sendBtn.disabled = true;
+  phoneStatus.textContent = 'در حال ارتباط با سامانه…';
+  try {
+    await customerAuthAdapter.sendOtp(normalized);
+  } catch (err) {
+    phoneStatus.textContent = err.message || 'ارسال کد تأیید در دسترس نیست.';
+    phoneStatus.classList.add('error');
+  } finally {
+    sendBtn.disabled = false;
+  }
+});
+
+/* Stage 2: Edit phone button */
+document.getElementById('editPhoneBtn').addEventListener('click', () => {
+  setAccountStage('phone');
+});
+
+/* Stage 2: OTP submit */
+const otpForm = document.getElementById('accountOtpForm');
+const otpStatus = document.getElementById('otpStatus');
+otpForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  otpStatus.textContent = '';
+  otpStatus.classList.remove('error');
+  const code = digits(otpForm.elements.otp_code.value).replace(/[^0-9]/g, '');
+  if (code.length < 5) {
+    otpStatus.textContent = 'کد تأیید را کامل وارد کن.';
+    otpStatus.classList.add('error');
+    otpForm.elements.otp_code.focus();
+    return;
+  }
+  const verifyBtn = document.getElementById('verifyOtpBtn');
+  verifyBtn.disabled = true;
+  otpStatus.textContent = 'در حال بررسی کد…';
+  try {
+    await customerAuthAdapter.verifyOtp(currentPhone, code);
+  } catch (err) {
+    otpStatus.textContent = err.message || 'کد تأیید تأیید نشد.';
+    otpStatus.classList.add('error');
+  } finally {
+    verifyBtn.disabled = false;
+  }
+});
+
+/* Stage 3: Register submit */
+const regForm = document.getElementById('accountRegisterForm');
+const regStatus = document.getElementById('registerStatus');
+regForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  regStatus.textContent = '';
+  regStatus.classList.remove('error');
+  const firstName = regForm.elements.first_name.value.trim();
+  const lastName = regForm.elements.last_name.value.trim();
+  if (firstName.length < 2 || lastName.length < 2) {
+    regStatus.textContent = 'نام و نام خانوادگی را کامل بنویس.';
+    regStatus.classList.add('error');
+    return;
+  }
+  const regBtn = document.getElementById('completeRegBtn');
+  regBtn.disabled = true;
+  regStatus.textContent = 'در حال ثبت اطلاعات…';
+  try {
+    await customerAuthAdapter.completeRegistration({
+      phone: currentPhone,
+      first_name: firstName,
+      last_name: lastName,
+      marketing: regForm.elements.marketing_consent.checked
+    });
+  } catch (err) {
+    regStatus.textContent = err.message || 'ثبت مشخصات انجام نشد.';
+    regStatus.classList.add('error');
+  } finally {
+    regBtn.disabled = false;
   }
 });
 </script>

@@ -2,10 +2,10 @@
 
 ## 1. Overview & Creative Direction
 
-This handoff documents the visual and structural redesign of **سالن زیبایی کیمیا (Kimia Beauty & Atelier)**.
+This handoff documents the visual and structural redesign of **سالن زیبایی کیمیا (Kimia Beauty & Atelier)**, including customer registration/login interface and Persian typography refinement.
 
 ### Brand Identity & Feeling
-- **Concept:** Kimia unites premium beauty styling (makeup, hair, skin, nails, brows/lashes) with an intimate portrait photography atelier under one roof.
+- **Concept:** Kimia unites premium beauty styling (makeup, hair, skin, nails, brows/lashes) with an intimate portrait photography atelier under one roof in Sadeghiyeh, Tehran.
 - **Atmosphere:** An intimate, contemporary luxury atelier: warm, artistic, confident, and welcoming.
 - **Palette System:**
   - Deep forest green (`#10271D`)
@@ -13,114 +13,131 @@ This handoff documents the visual and structural redesign of **سالن زیبا
   - Warm luxury ivory (`#FAF6F0` / `#F5F0E7`)
   - Champagne gold (`#D8B675` / `#EBD5A8`)
   - Restrained sage accents (`#1E382B`, `#2C4A3B`)
-- **Typography:**
-  - Persian Primary: **Vazirmatn** (Google Fonts, weights 300 to 800) with optimized Persian letterforms and RTL leading.
-  - Latin Details: **Cormorant Garamond** (Google Fonts, weights 400 & 600, italic) for seals, monograms, kicker subtitles, and Latin coordinates.
 
 ---
 
-## 2. Changed Files
+## 2. Persian Typography: Estedad Font Integration
+
+Vazirmatn has been replaced with **Estedad** for all Persian typography across the platform.
+
+### Source & Licensing
+- **Font:** Estedad Variable WebFont (`Estedad[wght].woff2`, `Estedad-Regular`, `Estedad-Medium`, `Estedad-SemiBold`)
+- **Author:** Amin Abedi (https://github.com/aminabedi68/Estedad)
+- **License:** SIL Open Font License (OFL) Version 1.1 (retained in `src/assets/fonts/OFL.txt`)
+- **Offline / Local First Delivery:** Local WOFF2 font assets reside in `src/assets/fonts/` and are embedded by `scripts/build-worker.mjs` into the Worker artifact to serve from `'self'` at `/fonts/Estedad-wght.woff2`. A public jsDelivr CDN link is configured as a secondary remote fallback.
+
+### Typographic Specifications
+- **Body:** `font: 400 16px/1.95 var(--sans);` (ensures minimum 16px on mobile to avoid iOS viewport zooming and guarantee high legibility).
+- **Navigation & Actions:** `font-weight: 500; font-size: 13.5px–14.5px;`
+- **Headings:** `font-weight: 500–600; line-height: 1.32–1.45;` (avoids overly bold or heavy heading styles).
+- **No Letter-Spacing on Persian:** Letter-spacing is strictly disabled on cursive Persian text; latin letter-spacing is applied only to uppercase Latin serif accents.
+- **Uniform Application:** Consistently declared across `src/index.html`, `src/admin.html`, and `worker/platform.js` (`simplePage`).
+
+---
+
+## 3. Customer Registration & Login (Frontend Interface)
+
+A customer account dialog has been added to provide an intuitive mobile-number and verification-code authentication experience.
+
+### User Journey Stages
+1. **Desktop & Mobile Entry Points:**
+   - Desktop Header: «ورود / ثبت‌نام» button next to the appointment booking CTA.
+   - Mobile Navigation: «ورود / ثبت‌نام مشتریان» menu item.
+2. **Stage A: Phone Number Entry (`#accountPhoneForm`):**
+   - Title: *«به کیمیا خوش آمدی»*
+   - Explanatory microcopy for viewing appointments and atelier sessions.
+   - Iranian mobile input (`autocomplete="tel"`, `inputmode="tel"`).
+   - Normalizes Persian, Arabic, and Latin digits consistently; validates against Iranian mobile format (`09...`).
+   - Action: *«دریافت کد تأیید»*.
+3. **Stage B: Verification Code Entry (`#accountOtpForm`):**
+   - Single accessible input with `autocomplete="one-time-code"`, `inputmode="numeric"`, `maxlength="6"`.
+   - Displays the normalized destination phone number with an *«ویرایش شماره»* action to edit the number.
+   - Resend button disabled until a real SMS delivery operation succeeds.
+4. **Stage C: Complete Registration Profile (`#accountRegisterForm`):**
+   - Collects customer first name and last name.
+   - No passwords or intrusive personal information required.
+   - Links to Privacy Policy (`/privacy`).
+   - Separate, unchecked marketing notification consent checkbox.
+5. **Development Visual Preview Switcher:**
+   - Explicitly labeled development review bar:
+     `[پیش‌نمایش بصری گام‌های ورود و عضویت: ۱. شماره موبایل | ۲. کد تأیید | ۳. تکمیل مشخصات]`
+   - Allows designers and engineers to inspect all 3 visual stages in preview mode without simulating fake authentication or storing dummy data.
+
+### Offline Behavior & Scope Isolation
+- Customer authentication is currently in offline preview mode (`customerAuthAdapter.isConfigured() === false`).
+- Submitting the phone form displays an honest message:
+  *«ورود و ثبت‌نام آنلاین به‌زودی فعال می‌شود؛ برای هماهنگی نوبت با سالن تماس بگیر.»*
+- No fake SMS is dispatched, no universal test codes are accepted, no fake sessions are created, and no credentials or tokens are stored in `localStorage`.
+- Customer account entry remains strictly isolated from Sites-based administrator authentication.
+- Browsing services, reading FAQ, submitting appointment requests, and tracking existing requests do NOT require registration.
+
+### Proposed Backend Integration Contracts (for VS Code)
+When implementing SMS gateway and session management in the backend:
+- `POST /api/auth/otp/send`: `{ phone: string }` → Sends 6-digit OTP via SMS with rate limiting.
+- `POST /api/auth/otp/verify`: `{ phone: string, code: string }` → Validates OTP, returns `{ is_new_user: boolean, session_token?: string, temp_token?: string }`.
+- `POST /api/auth/register`: `{ phone: string, temp_token: string, first_name: string, last_name: string, marketing: boolean }` → Persists customer profile and issues session cookie.
+
+---
+
+## 4. Changed Files Summary
 
 | File | Purpose of Modifications |
 | --- | --- |
-| `src/index.html` | Complete visual redesign of the customer-facing experience: refined header & wordmark seal, editorial hero with tailored atmospheric overlays, narrative philosophy section, warm ivory services cards with dual actions, dark emerald photography atelier spotlight, concept mood gallery with accessible modal dialog, 3-step experience journey, responsive 3-stage booking request flow with real-time feedback, appointment tracking module, FAQ accordion, contact & Google Maps route card, and mobile floating contact bar. |
-| `src/admin.html` | Cohesive luxury restyling of the administrator workspace. Aligned with the deep emerald palette, refined tabs, structured cards, accessible focus rings, and high-contrast forms, while preserving 100% of the existing DOM IDs, form field names, and script controllers. |
-| `worker/platform.js` | Elevated `simplePage` template with Vazirmatn typography and brand styling for supporting pages (`/services/:slug`, `/privacy`, error states). Added `HEAD` HTTP method support for public routes to ensure seamless monitoring and curl inspection. |
-| `scripts/vite-preview.mjs` | Adjusted `X-Frame-Options` and `Content-Security-Policy: frame-ancestors` in the local development preview adapter ONLY so Google AI Studio can cleanly embed the preview in its development iframe. The production Worker retains strict security headers (`DENY` / `frame-ancestors 'none'`) untouched. |
-| `package-lock.json` | Generated clean npm lockfile; removed extraneous `bun.lock` in accordance with repository normalization standards. |
-| `docs/FRONTEND_HANDOFF.md` | Comprehensive architectural and design documentation for ongoing development in VS Code with GitHub Copilot. |
+| `src/index.html` | Integrated Estedad font (`@font-face` and `--sans`), added customer registration & login modal (`#accountDialog`) with 3-stage journey (Phone, OTP, Profile), dev preview switcher, and desktop/mobile header triggers. Preserved booking form, tracking, concept gallery dialog, and all existing features. |
+| `src/admin.html` | Updated typography to Estedad font; preserved all existing form IDs, tables, controls, and script controllers. |
+| `worker/platform.js` | Updated `simplePage` (used for `/services/:slug`, `/privacy`, and 404/403 pages) with Estedad typography. |
+| `worker/index.template.js` | Added `/fonts/Estedad-wght.woff2` to `MEDIA_BASE64` and MIME type resolution (`font/woff2`); updated CSP font-src and style-src to allow `cdn.jsdelivr.net`. |
+| `scripts/build-worker.mjs` | Injected local `src/assets/fonts/Estedad-wght.woff2` base64 into Worker artifact during `npm run build`. |
+| `scripts/vite-preview.mjs` | Removed `X-Frame-Options: DENY` and adjusted CSP `frame-ancestors` in local preview adapter only, allowing Google AI Studio to embed the page in its development iframe while preserving strict production security headers. |
+| `src/assets/fonts/` | Downloaded local Estedad font files (`Estedad-wght.woff2`, `Estedad-Regular.woff2`, `Estedad-Medium.woff2`, `Estedad-SemiBold.woff2`) and SIL Open Font License (`OFL.txt`). |
+| `package.json` | Added `"lint": "tsc --noEmit"` and generated clean `package-lock.json`. |
+| `docs/FRONTEND_HANDOFF.md` | Comprehensive architectural, design, and integration documentation. |
 
 ---
 
-## 3. Preserved Architecture & API Contracts
+## 5. Preserved Architecture & API Contracts
 
 No backend functionality was removed or simplified. All existing contracts remain fully operational:
 
 - **Public Endpoints:**
   - `GET /`: Serves server-rendered HTML with injected SEO meta, JSON-LD schema, dynamic services catalog, operating hours, and gallery items.
+  - `GET /fonts/Estedad-wght.woff2`: Serves local variable font asset with immutable caching.
   - `GET /services/:slug`: Server-rendered dedicated SEO service page with Schema.org `Service` structured data.
   - `GET /privacy`: Server-rendered privacy statement with transparent customer data handling guidelines.
   - `GET /api/health`: Returns `{ ok: true, booking_enabled: boolean }`.
   - `POST /api/bookings`: Processes booking requests with idempotency key (`request_key`), consent confirmation, rate limiting IP hash, honeypot protection, and transactional PostgreSQL conflict resolution.
   - `POST /api/bookings/lookup`: Checks appointment status by 10-character reference code and phone number.
 - **Admin API (`/api/admin/*`):**
-  - Session verification (`/api/admin/session`)
-  - Data retrieval (`/api/admin/data`)
-  - Booking status transitions (`/api/admin/booking` — actions: `contacted`, `confirm`, `decline`, `cancel`)
-  - Service catalog management (`/api/admin/services`)
-  - Gallery items management (`/api/admin/gallery_items`)
-  - Team members management (`/api/admin/staff_members`)
-  - Business hours management (`/api/admin/business_hours`)
-  - Site settings update (`/api/admin/settings`)
-  - Image upload to R2 (`/api/admin/upload`)
+  - Session verification (`/api/admin/session`), data retrieval (`/api/admin/data`), booking management (`/api/admin/booking`), catalog, team, business hours, and site settings.
 - **Database Migrations:**
-  - `db/migrations/001_initial_schema.sql`: Core schema, settings, services, staff, gallery.
-  - `db/migrations/002_admin_booking.sql`: Booking lifecycle, admin audit logging, atomic `manage_booking` function.
-  - `db/migrations/003_booking_tracking.sql`: Public lookup function `lookup_booking` with strict field isolation and rate limiting.
+  - `db/migrations/001_initial_schema.sql`, `002_admin_booking.sql`, `003_booking_tracking.sql` preserved without modification.
 
 ---
 
-## 4. Concept Assets & Transparent Attribution
+## 6. Verification & Automated Testing Report
 
-All three images under `src/assets/` and `/media/` are conceptual design visuals:
-- `/media/atelier.webp` (`src/assets/kimia-atelier.webp`): Atelier interior mood.
-- `/media/portrait.webp` (`src/assets/portrait.webp`): Portrait session styling mood.
-- `/media/session.webp` (`src/assets/atelier-session.webp`): Lighting and photography session mood.
-
-**Attribution & Transparency Notice:**
-Every public-facing display of these images includes an explicit label:
-- Visual badge: `تصویر مفهومی` (Concept Imagery)
-- Alt text & caption: Explicitly identifies that these represent design mood and are not actual Kimia customers or salon interiors.
-- Genuine client photographs are only displayed when uploaded via the admin panel with verified consent (`consent_confirmed = true` and `is_published = true`) and rendered inside `<div class="real-gallery">__REAL_GALLERY__</div>`.
-
----
-
-## 5. Verification & Testing Report
-
-All automated tests and validation scripts were executed and passed cleanly:
+All automated test suites and validation tools were executed and confirmed passing:
 
 1. **Production Worker Build:**
    ```bash
    npm run build
    # Output: Built /app/applet/dist/server/index.js
    ```
-2. **Automated Test Suite:**
-   ```bash
-   npm test
-   # 1. validate-artifact.mjs: Worker artifact is valid ESM and targets existing hosting manifest.
-   # 2. test-worker.mjs: Route tests passed (homepage, media webp, health, configuration gate, input validation).
-   # 3. test-admin.mjs: Admin authorization, cross-origin writes, setup gate, crawler paths, service SEO, and client VM syntax passed.
-   # 4. test-database.mjs: PostgreSQL/WASM (PGlite): migrations 001-003, consent, idempotency, confirmation, slot conflict, cancellation, audit, and anonymous access passed.
-   ```
-3. **TypeScript Validation:**
-   ```bash
-   npx tsc --noEmit
-   # Output: Clean (0 errors)
-   ```
+2. **Automated Test Suite (`npm test`):**
+   - `scripts/validate-artifact.mjs`: Worker artifact is valid ESM and targets hosting manifest.
+   - `scripts/test-worker.mjs`: Route tests passed (`/`, `/media/portrait.webp`, `/api/health`, `/api/bookings` gate & validation).
+   - `scripts/test-admin.mjs`: Admin authorization, cross-origin write rejection, setup gate, crawler paths, service SEO canonical/JSON-LD, and client JavaScript syntax execution in `vm.Script`.
+   - `scripts/test-database.mjs`: PGlite PostgreSQL WASM test suite passed (migrations 001–003, consent enforcement, idempotency, slot conflicts, audit logging, and anonymous security).
+3. **TypeScript Validation (`npx tsc --noEmit` & `npm run lint`):**
+   - 0 TypeScript errors.
+   - 0 linting errors.
 4. **Local Preview HTTP Validation:**
-   - `GET /` → HTTP 200 (Full HTML rendered with Vite HMR client)
-   - `HEAD /` → HTTP 200 (Proper header negotiation)
-   - `GET /services/makeup` → HTTP 200 (Refined luxury service page)
-   - `GET /privacy` → HTTP 200 (Cohesive privacy policy page)
-   - `GET /media/portrait.webp` → HTTP 200 (Image served with immutable cache)
+   - `GET /` → HTTP 200 (HTML rendered with Vite HMR client and Estedad font)
+   - `GET /fonts/Estedad-wght.woff2` → HTTP 200 (`content-type: font/woff2`)
+   - `GET /services/makeup` → HTTP 200 (Dedicated service page)
+   - `GET /privacy` → HTTP 200 (Privacy statement)
    - `GET /api/health` → HTTP 200 (`{"ok":true,"booking_enabled":false}`)
-5. **Responsive Viewport Checks:**
-   - **360px & 390px (Mobile):** Single-column layout, compact typography, accessible 44px touch targets, mobile floating action bar with direct phone call and booking shortcut, non-overlapping bottom padding.
-   - **768px (Tablet):** 2-column service grid, stacked atelier editorial split, refined form layout.
-   - **1024px (Small Desktop / Laptop):** 3-column service grid, 1.05:0.95 atelier layout, 3-card concept gallery.
-   - **1440px (Large Desktop):** Maximum shell constraint at 1240px, balanced whitespace, crisp typography.
-
----
-
-## 6. Follow-Up Backend Tasks (for VS Code & Copilot)
-
-For the next development phase in VS Code:
-1. **Hosting & Production Deployment:**
-   - Deploy Cloudflare Worker (`npm run build`).
-   - Configure secrets in the production environment: `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `RATE_LIMIT_SALT`, `ADMIN_USER_IDS`, `ADMIN_EMAILS`.
-2. **Database Migrations:**
-   - Run migrations `001_initial_schema.sql`, `002_admin_booking.sql`, and `003_booking_tracking.sql` in sequence against the live PostgreSQL / Supabase database.
-3. **Admin Sign-in Portability:**
-   - When deploying beyond the Sites hosting provider, implement an auth adapter (e.g., Auth0, Supabase Auth, or session cookies) to replace Sites' `oai-authenticated-user-id` header validation.
-4. **Dynamic Booking Hours Synchronization:**
-   - Currently, form time slots are defaults; they can be hooked directly to live business hours from `business_hours` table.
+5. **Responsive Viewport & Dialog Checks:**
+   - Account dialog tested for desktop centered card layout and mobile bottom-sheet presentation.
+   - Focus management verified: opens on trigger, focuses first input, closes on ESC or backdrop click, returns focus to trigger button.
+   - 16px body font size avoids auto-zooming on mobile devices.

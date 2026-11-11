@@ -99,7 +99,7 @@ section[id]{scroll-margin-top:40px}
   transition:background .3s;
 }
 .nav{
-  height:86px;
+  height:104px;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -124,7 +124,8 @@ section[id]{scroll-margin-top:40px}
 }
 .brand-text{display:flex;flex-direction:column;gap:1px}
 .brand-name{
-  font:400 30px/1.8 var(--nastaliq);
+  font:400 30px/2.4 var(--nastaliq);
+  transform:translateY(8px);
   color:var(--text-light);
   letter-spacing:normal;
   padding:2px 0 6px;
@@ -1463,11 +1464,11 @@ h1,h2,h3,p{margin-top:0}
 }
 
 @media(max-width:680px){
-  .nav{height:74px}
+  .nav{height:96px}
   .nav-links{
     display:none;
     position:absolute;
-    top:74px;
+    top:96px;
     right:4vw;
     left:4vw;
     background:#0d1c15;
@@ -1503,7 +1504,7 @@ h1,h2,h3,p{margin-top:0}
     background:linear-gradient(0deg, #070f0c 0%, rgba(7,15,12,0.85) 45%, rgba(7,15,12,0.3) 100%);
   }
   .hero-copy{width:100%;padding-top:120px}
-  .brand-name{font-size:26px;line-height:1.8;padding:1px 0}
+  .brand-name{font-size:26px;line-height:2.4;padding:1px 0}
   .hero h1{
     font-size:clamp(34px,8.8vw,46px);
     line-height:2.2;
@@ -1603,10 +1604,8 @@ __SEO_HEAD__</head>
       <a href="#portfolio">گالری طراحی</a>
       <a href="#experience">مسیر تجربه</a>
       <a href="#contact">تماس و نشانی</a>
-      <a href="#account" class="nav-mobile-auth" id="mobileAccountLink">ورود / ثبت‌نام</a>
     </nav>
     <div class="nav-actions-group">
-      <button type="button" class="nav-auth-btn" data-action="open-account" aria-label="ورود یا ثبت‌نام حساب مشتریان">ورود / ثبت‌نام</button>
       <a class="nav-action" href="tel:+989307897825">تماس برای هماهنگی</a>
     </div>
     <button class="mobile-toggle" id="mobileToggle" aria-controls="navLinks" aria-expanded="false" aria-label="باز کردن منو">☰</button>

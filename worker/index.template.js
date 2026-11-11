@@ -3,6 +3,7 @@ const ADMIN_HTML = __ADMIN_HTML__;
 __PLATFORM_CODE__
 const MEDIA_BASE64 = {
   "/media/atelier.webp": __HERO_BASE64__,
+  [__HERO_MEDIA_PATH__]: __HERO_VERSIONED_BASE64__,
   "/media/portrait.webp": __PORTRAIT_BASE64__,
   "/media/session.webp": __SESSION_BASE64__,
   "/fonts/Vazirmatn-wght.woff2": __FONT_VAZIRMATN_BASE64__,

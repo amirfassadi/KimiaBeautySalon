@@ -1,6 +1,7 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
 await rm(dist, { recursive: true, force: true });
@@ -8,7 +9,7 @@ await mkdir(path.join(dist, 'server'), { recursive: true });
 await mkdir(path.join(dist, '.openai'), { recursive: true });
 const [html, hero, portrait, session, template, manifest, admin, platform, fontVazirmatn, fontEstedad, fontKatibeh, fontIranNastaliq] = await Promise.all([
   readFile(path.join(root, 'src/index.html'), 'utf8'),
-  readFile(path.join(root, 'src/assets/kimia-atelier.webp')),
+  readFile(path.join(root, 'src/assets/kimia-salon-hero.webp')),
   readFile(path.join(root, 'src/assets/portrait.webp')),
   readFile(path.join(root, 'src/assets/atelier-session.webp')),
   readFile(path.join(root, 'worker/index.template.js'), 'utf8'),
@@ -20,11 +21,14 @@ const [html, hero, portrait, session, template, manifest, admin, platform, fontV
   readFile(path.join(root, 'src/assets/fonts/Katibeh-Regular.woff2')),
   readFile(path.join(root, 'src/assets/fonts/IranNastaliq.woff2')),
 ]);
+const heroPath = '/media/hero-' + createHash('sha256').update(hero).digest('hex').slice(0, 12) + '.webp';
 const worker = template
-  .replace('__PAGE_HTML__', () => JSON.stringify(html))
+  .replace('__PAGE_HTML__', () => JSON.stringify(html.replaceAll('/media/atelier.webp', heroPath)))
   .replace('__ADMIN_HTML__', () => JSON.stringify(admin))
   .replace('__PLATFORM_CODE__', () => platform)
   .replace('__HERO_BASE64__', JSON.stringify(hero.toString('base64')))
+  .replace('__HERO_MEDIA_PATH__', JSON.stringify(heroPath))
+  .replace('__HERO_VERSIONED_BASE64__', JSON.stringify(hero.toString('base64')))
   .replace('__PORTRAIT_BASE64__', JSON.stringify(portrait.toString('base64')))
   .replace('__SESSION_BASE64__', JSON.stringify(session.toString('base64')))
   .replace('__FONT_VAZIRMATN_BASE64__', JSON.stringify(fontVazirmatn.toString('base64')))

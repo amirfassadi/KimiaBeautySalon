@@ -24,6 +24,17 @@ response = await worker.fetch(new Request('https://kimia-beauty-salon.test/'), e
 const homepage = await response.text();
 assert.match(homepage, /تماس برای هماهنگی/);
 assert.doesNotMatch(homepage, /id="openAccountBtn"/);
+assert.doesNotMatch(homepage, /<(?:a|button)\b[^>]*(?:id="mobileAccountLink"|data-action="open-account")/);
+assert.match(homepage, /زیبایی تو، امضای کیمیا/);
+const heroPath = homepage.match(/url\('\/(media\/hero-[0-9a-f]{12}\.webp)'\)/)?.[1];
+assert.ok(heroPath, 'New hero image must have a content-versioned URL.');
+response = await worker.fetch(new Request('https://kimia-beauty-salon.test/' + heroPath), env);
+assert.equal(response.status, 200);
+assert.match(response.headers.get('content-type'), /image\/webp/);
+assert.ok((await response.arrayBuffer()).byteLength > 10_000);
+response = await worker.fetch(new Request('https://kimia-beauty-salon.test/fonts/IranNastaliq.woff2'), env);
+assert.equal(response.status, 200);
+assert.match(response.headers.get('content-type'), /font\/woff2/);
 assert.match(homepage, /id="booking"[^>]*hidden/);
 assert.match(homepage, /id="tracking"[^>]*hidden/);
 console.log('Worker route tests passed: homepage, media, health, configuration gate, and input validation.');

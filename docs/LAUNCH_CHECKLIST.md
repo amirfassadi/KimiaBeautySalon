@@ -15,6 +15,8 @@
 
 ## تست محلی
 
+- [x] اصلاح و تست شروع واقعی CLI production از لینک current با --preserve-symlinks-main؛ تست regression شروع سرویس، health 200 و صفحه ورود 200 با PostgreSQL/SCRAM محلی تأیید شدند. وضعیت systemd روی VPS جداگانه بررسی شود.
+
 - [x] اصلاح دریافت DATABASE_PASSWORD در pg برای هر سه ابزار سرور/migration/مدیر؛ تست regression رمز و نویسه‌های خاص اضافه شد.
 - [x] migration CLI و integration با PostgreSQL 18.6 واقعی و احراز هویت اجباری SCRAM موفق بودند؛ اتصال بدون رمز در همان کلاستر رد شد. آزمون‌های قبلی با trust، تأیید SCRAM محسوب نمی‌شوند.
 

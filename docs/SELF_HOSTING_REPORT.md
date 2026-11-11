@@ -1,5 +1,14 @@
 # گزارش آماده‌سازی self-hosted کیمیا
 
+## اصلاح شروع سرویس از لینک current — 2026-11-11
+
+خروج موفق بدون listener روی VPS ناشی از تطبیق رشته‌ای process.argv[1] با import.meta.url در entrypoint بود: Node فایل اصلی را به مسیر واقعی release resolve می‌کرد، ولی argv مسیر لینک current را نگه می‌داشت. با این اختلاف، بدنه شروع برنامه اجرا نمی‌شد.
+
+- ExecStart سرویس با گزینه `--preserve-symlinks-main` اصلاح شد؛ مسیر current و معماری جابه‌جایی releaseها حفظ می‌شوند.
+- تست regression جدید scripts/test-service-startup.mjs همان فرمان را از یک لینک موقت اجرا می‌کند و اثبات می‌کند startup واقعاً اجرا می‌شود، نه خروج خاموش با کد صفر. این تست به npm test اضافه شد.
+- اجرای واقعی CLI production با همان گزینه و مسیر لینک، PostgreSQL 18.6 با SCRAM و DATABASE_PASSWORD انجام شد؛ سرویس listener ایجاد کرد، health برابر HTTP 200 با database_ready:true بود و صفحه ورود نیز HTTP 200 داد. lint و diff check موفق بودند.
+- اصلاح سرویس موجود VPS فقط به تغییر ExecStart، daemon-reload و restart نیاز دارد؛ تغییر رمز یا اجرای دوباره migration لازم نیست. نتیجه restart روی VPS باید جدا تأیید شود.
+
 ## اصلاح اتصال رمزی PostgreSQL — 2026-11-11
 
 خطای اجرای migration روی VPS (`client password must be a string`) در کد بازتولید شد: pg هنگام پردازش connectionString بدون رمز، گزینهٔ جداگانه password را با مقدار خالی URL جایگزین می‌کرد. رمز DATABASE_PASSWORD الزاماً اشتباه نبود. آزمون PostgreSQL واقعی قبلی از کلاستر محلی trust استفاده می‌کرد و این مسیر احراز هویت را پوشش نمی‌داد.

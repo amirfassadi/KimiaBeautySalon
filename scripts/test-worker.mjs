@@ -20,4 +20,10 @@ response = await worker.fetch(new Request('https://kimia-beauty-salon.test/api/b
   body: JSON.stringify({ name: 'تست', phone: 'not-a-phone', service: 'atelier' }),
 }), env);
 assert.equal(response.status, 400);
+response = await worker.fetch(new Request('https://kimia-beauty-salon.test/'), env);
+const homepage = await response.text();
+assert.match(homepage, /تماس برای هماهنگی/);
+assert.doesNotMatch(homepage, /id="openAccountBtn"/);
+assert.match(homepage, /id="booking"[^>]*hidden/);
+assert.match(homepage, /id="tracking"[^>]*hidden/);
 console.log('Worker route tests passed: homepage, media, health, configuration gate, and input validation.');

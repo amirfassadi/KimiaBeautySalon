@@ -72,9 +72,9 @@ A customer account dialog has been added to provide an intuitive mobile-number a
    - Allows designers and engineers to inspect all 3 visual stages in preview mode without simulating fake authentication or storing dummy data.
 
 ### Offline Behavior & Scope Isolation
-- Customer authentication is currently in offline preview mode (`customerAuthAdapter.isConfigured() === false`).
-- Submitting the phone form displays an honest message:
-  *«ورود و ثبت‌نام آنلاین به‌زودی فعال می‌شود؛ برای هماهنگی نوبت با سالن تماس بگیر.»*
+- Customer authentication remains disabled in the frontend (`customerAuthAdapter.isConfigured() === false`); it does not call `/api/auth/*`.
+- The Worker contracts and append-only migration 004 are retained for a future activation, but migration 004 must not be applied to production yet.
+- The UI displays an honest “به‌زودی فعال می‌شود” message. No OTP, SMS, session or customer account is created.
 - No fake SMS is dispatched, no universal test codes are accepted, no fake sessions are created, and no credentials or tokens are stored in `localStorage`.
 - Customer account entry remains strictly isolated from Sites-based administrator authentication.
 - Browsing services, reading FAQ, submitting appointment requests, and tracking existing requests do NOT require registration.

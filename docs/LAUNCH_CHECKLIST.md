@@ -15,6 +15,9 @@
 
 ## تست محلی
 
+- [x] اصلاح دریافت DATABASE_PASSWORD در pg برای هر سه ابزار سرور/migration/مدیر؛ تست regression رمز و نویسه‌های خاص اضافه شد.
+- [x] migration CLI و integration با PostgreSQL 18.6 واقعی و احراز هویت اجباری SCRAM موفق بودند؛ اتصال بدون رمز در همان کلاستر رد شد. آزمون‌های قبلی با trust، تأیید SCRAM محسوب نمی‌شوند.
+
 - [x] `npm run build` پاس شد.
 - [x] `npm test` پاس شد؛ PGlite WASM است، نه PostgreSQL 18 واقعی.
 - [x] `npm run lint` پاس شد (`tsc --noEmit`).

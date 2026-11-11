@@ -163,6 +163,8 @@ ALLOWED_HOSTS=kbkimiabeauty.ir,www.kbkimiabeauty.ir,localhost,127.0.0.1
 
 رمز را با password manager بسازید، ترجیحاً فقط حروف و ارقام، و فقط در prompt `\password` و فایل محدودشده وارد کنید. آن را در دستور shell، Git، ticket یا log قرار ندهید. `SUPABASE_*`, `ADMIN_*`, OTP/SMS و `AUTH_CUSTOMER_ENABLED` برای self-hosted فعال نیستند و نباید تنظیم شوند.
 
+رمز جداگانه توسط server/postgres-config.js در حافظه به تنظیم اتصال اعمال می‌شود؛ آن را به‌صورت دستی در URL قرار ندهید. اگر از نسخه قبل از این اصلاح استفاده می‌کنید و خطای `client password must be a string` می‌گیرید، release اصلاح‌شده را نصب کنید؛ غیرفعال‌کردن SCRAM یا تبدیل pg_hba به trust راه‌حل این خطا نیست.
+
 اکنون migrationها را اجرا کنید. فایل env فقط در process محیطی خوانده می‌شود و مقدار رمز در آرگومان فرمان نیست:
 
 ```sh

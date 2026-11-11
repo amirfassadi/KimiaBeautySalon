@@ -7,6 +7,7 @@ import {randomBytes, randomUUID} from 'node:crypto';
 import {runMigrations} from '../server/migrate.js';
 import {provisionAdmin} from '../server/bootstrap-admin.js';
 import {createStandaloneHandler} from '../server/index.js';
+import {postgresConfig} from '../server/postgres-config.js';
 
 const connectionString = process.env.KIMIA_TEST_DATABASE_URL;
 if (!connectionString) {
@@ -22,7 +23,7 @@ if (!['localhost', '127.0.0.1', '::1', '[::1]'].includes(target.hostname) ||
 }
 
 const {Pool} = await import('pg');
-const pool = new Pool({connectionString, max: 5, application_name: 'kimia-postgres-integration-test'});
+const pool = new Pool(postgresConfig({DATABASE_URL: connectionString, DATABASE_PASSWORD: process.env.KIMIA_TEST_DATABASE_PASSWORD}, {max: 5, application_name: 'kimia-postgres-integration-test'}));
 const tempDir = await mkdtemp(path.join(tmpdir(), 'kimia-postgres-integration-'));
 const uploadDir = path.join(tempDir, 'uploads');
 const testId = randomUUID();

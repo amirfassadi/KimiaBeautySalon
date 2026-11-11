@@ -12,7 +12,7 @@
     "test:postgres": "npm run build && node scripts/test-postgres-integration.mjs",
     "preview": "vite --host 0.0.0.0",
     "lint": "tsc --noEmit",
-    "test": "node scripts/validate-artifact.mjs && node scripts/test-worker.mjs && node scripts/test-admin.mjs && node scripts/test-launch-content.mjs && node scripts/test-database.mjs && node scripts/test-auth.mjs && node scripts/test-self-hosted.mjs"
+    "test": "node scripts/validate-artifact.mjs && node scripts/test-postgres-config.mjs && node scripts/test-worker.mjs && node scripts/test-admin.mjs && node scripts/test-launch-content.mjs && node scripts/test-database.mjs && node scripts/test-auth.mjs && node scripts/test-self-hosted.mjs"
   },
   "dependencies": {
     "pg": "^8.23.1"

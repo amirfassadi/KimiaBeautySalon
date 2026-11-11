@@ -3,6 +3,7 @@ import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {Pool} from 'pg';
 import {hashPassword} from './passwords.js';
+import {postgresConfig} from './postgres-config.js';
 
 function askVisible(question) {
   const readline = createInterface({input: process.stdin, output: process.stdout});
@@ -69,7 +70,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     console.error('DATABASE_URL is required. No account was created.');
     process.exitCode = 2;
   } else {
-    const pool = new Pool({connectionString: process.env.DATABASE_URL, password: process.env.DATABASE_PASSWORD || undefined, max: 1, application_name: 'kimia-admin-provision'});
+    const pool = new Pool(postgresConfig(process.env, {max: 1, application_name: 'kimia-admin-provision'}));
     try {
       const email = await askVisible('Administrator email: ');
       const password = await askHidden('New password (input hidden): ');

@@ -8,6 +8,7 @@ import {Pool} from 'pg';
 import worker from '../dist/server/index.js';
 import {adminAuthRoutes} from './admin-auth.js';
 import {createPostgresAdapter} from './postgres-adapter.js';
+import {postgresConfig} from './postgres-config.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LOGIN_HTML = await readFile(new URL('../src/admin-login.html', import.meta.url), 'utf8');
@@ -266,7 +267,7 @@ function validateRuntimeConfig(env) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     const port = validateRuntimeConfig(process.env);
-    const pool = new Pool({connectionString: process.env.DATABASE_URL, password: process.env.DATABASE_PASSWORD || undefined, max: 10, idleTimeoutMillis: 30000, connectionTimeoutMillis: 5000, application_name: 'kimia-web'});
+    const pool = new Pool(postgresConfig(process.env, {max: 10, idleTimeoutMillis: 30000, connectionTimeoutMillis: 5000, application_name: 'kimia-web'}));
     const role = await pool.query('select current_user as role_name, rolsuper from pg_roles where rolname=current_user');
     if (!role.rows[0] || role.rows[0].rolsuper || role.rows[0].role_name === 'postgres') {
       throw new Error('The application database role must be dedicated and non-superuser.');

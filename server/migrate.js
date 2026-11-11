@@ -2,6 +2,7 @@ import {createHash} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {postgresConfig} from './postgres-config.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const MIGRATIONS = [
@@ -229,7 +230,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     console.error('DATABASE_URL is required; no migration was run.');
     process.exitCode = 2;
   } else {
-    const pool = new Pool({connectionString: process.env.DATABASE_URL, password: process.env.DATABASE_PASSWORD || undefined, max: 1, application_name: 'kimia-migrations'});
+    const pool = new Pool(postgresConfig(process.env, {max: 1, application_name: 'kimia-migrations'}));
     try {
       const versions = await runMigrations(pool, {adoptExisting: process.argv.includes('--adopt-existing')});
       console.log(`Self-hosted schema versions verified/applied: ${versions.join(', ')}`);

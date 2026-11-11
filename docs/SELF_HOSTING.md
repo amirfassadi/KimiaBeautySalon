@@ -256,7 +256,8 @@ sudo install -o root -g root -m 0755 \
   /opt/kimia/current/deploy/certbot/50-kimia-nginx-reload.sh \
   /etc/letsencrypt/renewal-hooks/deploy/50-kimia-nginx-reload
 sudo sh -n /etc/letsencrypt/renewal-hooks/deploy/50-kimia-nginx-reload
-sudo certbot renew --cert-name kbkimiabeauty.ir --dry-run --run-deploy-hooks
+sudo certbot --version
+sudo certbot renew --cert-name kbkimiabeauty.ir --dry-run
 ```
 
 dry-run نباید گواهی یا پیکربندی سایت دیگری را تغییر دهد. برای اثبات نصب و شرایط hook، مسیر و مجوز را بررسی کنید و renewal log/system journal را ببینید:
@@ -266,7 +267,15 @@ sudo ls -l /etc/letsencrypt/renewal-hooks/deploy/50-kimia-nginx-reload
 sudo journalctl -u certbot.service -n 100 --no-pager
 ```
 
-اگر نسخهٔ Certbot از `--run-deploy-hooks` پشتیبانی نمی‌کند، گزینه را حذف نکنید و حدس نزنید؛ `certbot renew --help all` را بررسی کنید و روش dry-run سازگار همان نسخه را به‌کار برید. اجرای مستقیم hook با environment نمونه فقط در محیط تست جدا مجاز است؛ روی VPS reload دستی انجام ندهید. `nginx -t` کل پیکربندی موجود را اعتبارسنجی می‌کند ولی فایل دیگری را تغییر نمی‌دهد؛ reload graceful سراسری است و فقط پس از تمدید موفق همین گواهی اجرا می‌شود.
+نسخهٔ Certbot نصب‌شده روی VPS گزینهٔ `--run-deploy-hooks` را نمی‌پذیرد. dry-run بالا اعتبارسنجی و تمدید آزمایشی را بررسی می‌کند و اثبات اجرای deploy hook نیست. پس از موفقیت آن، hook نصب‌شده را جداگانه و با مشخصات گواهی واقعی کیمیا تست کنید:
+
+```sh
+sudo env RENEWED_LINEAGE=/etc/letsencrypt/live/kbkimiabeauty.ir \
+  RENEWED_DOMAINS='kbkimiabeauty.ir www.kbkimiabeauty.ir' \
+  /etc/letsencrypt/renewal-hooks/deploy/50-kimia-nginx-reload
+```
+
+این تست مستقل ابتدا `nginx -t` و سپس reload graceful انجام می‌دهد و گواهی را تعویض یا تمدید نمی‌کند؛ شاهد فراخوانی خودکار hook توسط Certbot نیست. در تمدید واقعی، Certbot فایل اجرایی نصب‌شده در renewal-hooks/deploy را فراخوانی می‌کند و خود hook گواهی‌های دیگر را نادیده می‌گیرد. در نسخه‌های جدیدتر، پس از تأیید وجود گزینه در help، می‌توان dry-run را همراه `--run-deploy-hooks` اجرا کرد. نیازی به ارتقای اجباری Certbot یا تغییر گواهی‌های سایر سایت‌ها نیست.
 
 ## ۷. پذیرش و محتوای واقعی
 

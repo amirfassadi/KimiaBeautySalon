@@ -20,9 +20,9 @@
   font-display: swap;
 }
 @font-face {
-  font-family: 'Katibeh';
-  src: url('/fonts/Katibeh.woff2') format('woff2'),
-       url('https://fonts.gstatic.com/s/katibeh/v22/ZGjXol5MQJog4bxDWC9bVQNd.woff2') format('woff2');
+  font-family: 'IranNastaliq';
+  src: url('/fonts/IranNastaliq.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/gh/font-store/font-IranNastaliq@master/WebFonts/IranNastaliq-Web.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -48,7 +48,8 @@
   --line-ivory:#dfd3c3;
   --serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
   --sans:'Estedad',-apple-system,BlinkMacSystemFont,Tahoma,sans-serif;
-  --calligraphy:'Katibeh',var(--sans);
+  --calligraphy:'IranNastaliq','Estedad',serif;
+  --nastaliq:'IranNastaliq','Estedad',serif;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;overflow-x:hidden}
@@ -78,7 +79,7 @@ section[id]{scroll-margin-top:40px}
   color:var(--bg-dark);
   padding:12px 22px;
   font-weight:600;
-  border-radius:2px;
+  border-radius:10px;
   box-shadow:0 10px 30px rgba(0,0,0,0.5);
   transition:top .2s;
 }
@@ -123,10 +124,10 @@ section[id]{scroll-margin-top:40px}
 }
 .brand-text{display:flex;flex-direction:column;gap:1px}
 .brand-name{
-  font:400 24px/1.35 var(--calligraphy);
+  font:400 30px/1.8 var(--nastaliq);
   color:var(--text-light);
   letter-spacing:normal;
-  padding:2px 0;
+  padding:2px 0 6px;
 }
 .brand-en{
   color:#d4c29e;
@@ -179,12 +180,15 @@ section[id]{scroll-margin-top:40px}
   font-weight:500;
   cursor:pointer;
   transition:all .2s;
-  border-radius:1px;
+  border-radius:10px;
 }
 .nav-auth-btn:hover{
   background:rgba(216,182,117,0.12);
   border-color:var(--gold);
   color:var(--gold-hover);
+}
+#mobileAccountLink{
+  display:none!important;
 }
 .nav-action{
   border:1px solid var(--gold);
@@ -197,7 +201,7 @@ section[id]{scroll-margin-top:40px}
   font-size:13.5px;
   font-weight:600;
   transition:background .25s, transform .2s, box-shadow .2s;
-  border-radius:1px;
+  border-radius:10px;
 }
 .nav-action:hover{
   background:var(--gold-hover);
@@ -212,7 +216,7 @@ section[id]{scroll-margin-top:40px}
   width:44px;
   height:44px;
   font-size:22px;
-  border-radius:2px;
+  border-radius:10px;
   cursor:pointer;
 }
 
@@ -229,7 +233,7 @@ section[id]{scroll-margin-top:40px}
   font-size:14.5px;
   font-weight:600;
   transition:all .25s;
-  border-radius:1px;
+  border-radius:10px;
   cursor:pointer;
   text-align:center;
 }
@@ -293,14 +297,15 @@ section[id]{scroll-margin-top:40px}
 }
 h1,h2,h3,p{margin-top:0}
 .hero h1{
-  font:400 clamp(52px,7.8vw,92px)/1.55 var(--calligraphy);
-  margin:12px 0 20px;
-  padding:6px 0;
+  font:400 clamp(42px,6.4vw,70px)/2.3 var(--nastaliq);
+  margin:10px 0 20px;
+  padding:8px 0 16px;
   color:var(--text-light);
   letter-spacing:normal;
+  overflow:visible;
 }
 .hero h1 em{
-  font-family:var(--calligraphy);
+  font-family:var(--nastaliq);
   font-style:normal;
   font-weight:400;
   color:var(--gold);
@@ -364,14 +369,15 @@ h1,h2,h3,p{margin-top:0}
   align-items:center;
 }
 .philosophy-quote{
-  font:400 clamp(28px,3.5vw,42px)/1.85 var(--calligraphy);
+  font:400 clamp(24px,3.2vw,36px)/2.3 var(--nastaliq);
   color:var(--text-light);
   border-right:3px solid var(--gold);
-  padding:8px 24px 8px 0;
+  padding:10px 24px 14px 0;
   letter-spacing:normal;
+  overflow:visible;
 }
 .philosophy-quote em{
-  font-family:var(--calligraphy);
+  font-family:var(--nastaliq);
   font-style:normal;
   font-weight:400;
   color:var(--gold);
@@ -438,7 +444,7 @@ h1,h2,h3,p{margin-top:0}
   flex-direction:column;
   position:relative;
   transition:all .3s ease;
-  border-radius:1px;
+  border-radius:18px;
 }
 .service:hover{
   background:#ffffff;
@@ -628,6 +634,7 @@ h1,h2,h3,p{margin-top:0}
   overflow:hidden;
   background:#141a17;
   border:1px solid var(--line-dark);
+  border-radius:18px;
 }
 .portfolio-card img{
   width:100%;
@@ -656,7 +663,7 @@ h1,h2,h3,p{margin-top:0}
   border:1px solid rgba(216,182,117,0.4);
   font-size:11.5px;
   padding:4px 10px;
-  border-radius:1px;
+  border-radius:8px;
 }
 .portfolio-card span{
   position:absolute;
@@ -685,7 +692,7 @@ h1,h2,h3,p{margin-top:0}
   width:100%;
   height:300px;
   object-fit:cover;
-  border-radius:1px;
+  border-radius:14px;
 }
 .real-gallery figcaption{
   color:var(--text-light-muted);
@@ -768,7 +775,7 @@ h1,h2,h3,p{margin-top:0}
   padding:24px;
   background:#ffffff;
   border:1px solid #decbb4;
-  border-radius:1px;
+  border-radius:16px;
 }
 .booking-contact-card h4{
   margin:0 0 8px;
@@ -793,7 +800,7 @@ h1,h2,h3,p{margin-top:0}
   border:1px solid #caa972;
   padding:8px 18px;
   background:#faf5ee;
-  border-radius:1px;
+  border-radius:10px;
   transition:all .2s;
 }
 .booking-contact-card a:hover{
@@ -805,6 +812,7 @@ h1,h2,h3,p{margin-top:0}
   border:1px solid #e1d5c3;
   padding:40px clamp(24px,5vw,44px);
   box-shadow:0 12px 42px rgba(40,30,20,0.06);
+  border-radius:22px;
 }
 .booking-form{
   display:grid;
@@ -840,7 +848,7 @@ h1,h2,h3,p{margin-top:0}
   border:1px solid #e4d7c3;
   padding:12px 16px;
   margin:0 0 8px;
-  border-radius:1px;
+  border-radius:12px;
   line-height:1.8;
 }
 .booking-step{
@@ -875,7 +883,7 @@ h1,h2,h3,p{margin-top:0}
   background:#fcfaf6;
   color:#231f19;
   padding:12px 14px;
-  border-radius:1px;
+  border-radius:10px;
   min-width:0;
   font-size:16px;
   outline:none;
@@ -1208,7 +1216,7 @@ h1,h2,h3,p{margin-top:0}
   border:1px solid var(--line-gold);
   padding:36px clamp(20px,5vw,36px) 28px;
   box-shadow:0 24px 70px rgba(0,0,0,0.7);
-  border-radius:2px;
+  border-radius:20px;
   position:relative;
 }
 .account-dialog-header{
@@ -1269,7 +1277,7 @@ h1,h2,h3,p{margin-top:0}
   background:#14291f;
   border:1px solid rgba(216,182,117,0.25);
   padding:12px 14px;
-  border-radius:1px;
+  border-radius:12px;
   margin-bottom:18px;
   font-size:13px;
   line-height:1.8;
@@ -1282,7 +1290,7 @@ h1,h2,h3,p{margin-top:0}
   font-size:11px;
   font-weight:600;
   padding:2px 8px;
-  border-radius:1px;
+  border-radius:6px;
   margin-left:8px;
 }
 .dev-preview-bar{
@@ -1291,6 +1299,7 @@ h1,h2,h3,p{margin-top:0}
   padding:10px 12px;
   margin-bottom:20px;
   font-size:12px;
+  border-radius:12px;
 }
 .dev-preview-label{
   display:block;
@@ -1310,7 +1319,7 @@ h1,h2,h3,p{margin-top:0}
   font-size:11.5px;
   padding:4px 10px;
   cursor:pointer;
-  border-radius:1px;
+  border-radius:14px;
 }
 .dev-chip.active{
   background:var(--gold);
@@ -1344,7 +1353,7 @@ h1,h2,h3,p{margin-top:0}
   background:#fcfaf6;
   color:#1f1b15;
   padding:12px 14px;
-  border-radius:1px;
+  border-radius:10px;
   font-size:16px;
   outline:none;
   transition:border-color .2s, box-shadow .2s;
@@ -1466,9 +1475,22 @@ h1,h2,h3,p{margin-top:0}
     flex-direction:column;
     gap:14px;
     border:1px solid rgba(216,182,117,0.3);
+    border-radius:16px;
     box-shadow:0 16px 40px rgba(0,0,0,0.6);
   }
   .nav-links.open{display:flex}
+  .nav-links.open #mobileAccountLink{
+    display:block!important;
+    margin-top:8px;
+    width:100%;
+    text-align:center;
+    padding:11px 18px;
+    border-radius:10px;
+    background:rgba(216,182,117,0.12);
+    border:1px solid rgba(216,182,117,0.4);
+    color:var(--gold-hover);
+    font-weight:600;
+  }
   .nav-actions-group{display:none}
   .mobile-toggle{display:block}
   .hero{
@@ -1481,16 +1503,16 @@ h1,h2,h3,p{margin-top:0}
     background:linear-gradient(0deg, #070f0c 0%, rgba(7,15,12,0.85) 45%, rgba(7,15,12,0.3) 100%);
   }
   .hero-copy{width:100%;padding-top:120px}
-  .brand-name{font-size:21px;padding:1px 0}
+  .brand-name{font-size:26px;line-height:1.8;padding:1px 0}
   .hero h1{
-    font-size:clamp(38px,9.5vw,52px);
-    line-height:1.6;
-    margin:10px 0 18px;
+    font-size:clamp(34px,8.8vw,46px);
+    line-height:2.2;
+    margin:8px 0 16px;
     padding:6px 0;
   }
   .philosophy-quote{
-    font-size:clamp(24px,5.5vw,32px);
-    line-height:1.8;
+    font-size:clamp(22px,5vw,28px);
+    line-height:2.2;
     padding:6px 18px 6px 0;
   }
   .hero-vertical{display:none}
@@ -1581,8 +1603,10 @@ __SEO_HEAD__</head>
       <a href="#portfolio">گالری طراحی</a>
       <a href="#experience">مسیر تجربه</a>
       <a href="#contact">تماس و نشانی</a>
+      <a href="#account" class="nav-mobile-auth" id="mobileAccountLink">ورود / ثبت‌نام</a>
     </nav>
     <div class="nav-actions-group">
+      <button type="button" class="nav-auth-btn" data-action="open-account" aria-label="ورود یا ثبت‌نام حساب مشتریان">ورود / ثبت‌نام</button>
       <a class="nav-action" href="tel:+989307897825">تماس برای هماهنگی</a>
     </div>
     <button class="mobile-toggle" id="mobileToggle" aria-controls="navLinks" aria-expanded="false" aria-label="باز کردن منو">☰</button>
@@ -1594,12 +1618,12 @@ __SEO_HEAD__</head>
   <section class="hero">
     <div class="shell">
       <div class="hero-copy">
-        <span class="kicker">KIMIA BEAUTY · PHOTO ATELIER</span>
-        <h1 data-dynamic="hero-title">یک قرار،<br>از زیبایی تا <em>قاب عکس</em></h1>
-        <p data-dynamic="hero-description">خدمات زیبایی و آتلیهٔ عکاسی کیمیا؛ فرصتی برای رسیدگی به خودت و ثبت لحظه‌های دلخواهت در فضایی آرام و اختصاصی در صادقیهٔ تهران.</p>
+        <span class="kicker">KIMIA BEAUTY · SALON & ATELIER</span>
+        <h1 data-dynamic="hero-title">زیبایی تو،<br>امضای <em>کیمیا</em></h1>
+        <p data-dynamic="hero-description">خدمات تخصصی زیبایی بانوان، همراه با آتلیه عکاسی در صادقیه تهران.</p>
         <div class="hero-actions">
           <a class="button" href="tel:+989307897825">تماس برای هماهنگی</a>
-          <a class="button outline" href="#services">کشف خدمات کیمیا</a>
+          <a class="button outline" href="#services">مشاهده خدمات</a>
         </div>
         <div class="hero-note">
           <span><b>✦</b> خدمات تخصصی زیبایی</span>
@@ -2337,14 +2361,13 @@ function closeAccountModal() {
   }
 }
 
-if (openAccountBtn) openAccountBtn.addEventListener('click', () => openAccountModal(openAccountBtn));
-if (mobileAccountLink) {
-  mobileAccountLink.style.display = 'block';
-  mobileAccountLink.addEventListener('click', () => {
-    closeMenu();
-    openAccountModal(mobileAccountLink);
+document.querySelectorAll('[data-action="open-account"], #mobileAccountLink').forEach(trigger => {
+  trigger.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (typeof closeMenu === 'function') closeMenu();
+    openAccountModal(trigger);
   });
-}
+});
 closeAccountBtn.addEventListener('click', closeAccountModal);
 
 accountDialog.addEventListener('click', e => {

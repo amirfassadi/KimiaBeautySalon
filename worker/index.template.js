@@ -5,8 +5,10 @@ const MEDIA_BASE64 = {
   "/media/atelier.webp": __HERO_BASE64__,
   "/media/portrait.webp": __PORTRAIT_BASE64__,
   "/media/session.webp": __SESSION_BASE64__,
+  "/fonts/Vazirmatn-wght.woff2": __FONT_VAZIRMATN_BASE64__,
   "/fonts/Estedad-wght.woff2": __FONT_ESTEDAD_BASE64__,
   "/fonts/Katibeh.woff2": __FONT_KATIBEH_BASE64__,
+  "/fonts/IranNastaliq.woff2": __FONT_IRANNASTALIQ_BASE64__,
 };
 const SERVICES = new Set(["makeup", "hair", "nails", "eyes", "skin", "atelier"]);
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff" };

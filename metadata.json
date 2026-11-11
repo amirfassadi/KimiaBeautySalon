@@ -1,0 +1,7 @@
+{
+  "name": "Kimia Beauty & Atelier",
+  "description": "سالن زیبایی کیمیا؛ زیبایی، میکاپ و آتلیهٔ عکاسی پرتره در صادقیهٔ تهران.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

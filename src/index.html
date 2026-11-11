@@ -19,6 +19,14 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Katibeh';
+  src: url('/fonts/Katibeh.woff2') format('woff2'),
+       url('https://fonts.gstatic.com/s/katibeh/v22/ZGjXol5MQJog4bxDWC9bVQNd.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 :root{
   --bg-dark:#070f0c;
   --bg-dark-surface:#0d1a14;
@@ -40,6 +48,7 @@
   --line-ivory:#dfd3c3;
   --serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
   --sans:'Estedad',-apple-system,BlinkMacSystemFont,Tahoma,sans-serif;
+  --calligraphy:'Katibeh',var(--sans);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;overflow-x:hidden}
@@ -114,9 +123,10 @@ section[id]{scroll-margin-top:40px}
 }
 .brand-text{display:flex;flex-direction:column;gap:1px}
 .brand-name{
-  font-weight:600;
-  font-size:17px;
+  font:400 24px/1.35 var(--calligraphy);
   color:var(--text-light);
+  letter-spacing:normal;
+  padding:2px 0;
 }
 .brand-en{
   color:#d4c29e;
@@ -283,14 +293,16 @@ section[id]{scroll-margin-top:40px}
 }
 h1,h2,h3,p{margin-top:0}
 .hero h1{
-  font-size:clamp(44px,6.8vw,82px);
-  font-weight:500;
-  line-height:1.32;
+  font:400 clamp(52px,7.8vw,92px)/1.55 var(--calligraphy);
   margin:12px 0 20px;
+  padding:6px 0;
   color:var(--text-light);
+  letter-spacing:normal;
 }
 .hero h1 em{
-  font:italic 500 1em var(--serif);
+  font-family:var(--calligraphy);
+  font-style:normal;
+  font-weight:400;
   color:var(--gold);
   padding:0 4px;
 }
@@ -352,15 +364,16 @@ h1,h2,h3,p{margin-top:0}
   align-items:center;
 }
 .philosophy-quote{
-  font-size:clamp(22px,2.6vw,32px);
-  font-weight:500;
-  line-height:1.75;
+  font:400 clamp(28px,3.5vw,42px)/1.85 var(--calligraphy);
   color:var(--text-light);
   border-right:3px solid var(--gold);
-  padding-right:24px;
+  padding:8px 24px 8px 0;
+  letter-spacing:normal;
 }
 .philosophy-quote em{
-  font:italic 400 1.05em var(--serif);
+  font-family:var(--calligraphy);
+  font-style:normal;
+  font-weight:400;
   color:var(--gold);
 }
 .philosophy-text{
@@ -1468,7 +1481,18 @@ h1,h2,h3,p{margin-top:0}
     background:linear-gradient(0deg, #070f0c 0%, rgba(7,15,12,0.85) 45%, rgba(7,15,12,0.3) 100%);
   }
   .hero-copy{width:100%;padding-top:120px}
-  .hero h1{font-size:46px}
+  .brand-name{font-size:21px;padding:1px 0}
+  .hero h1{
+    font-size:clamp(38px,9.5vw,52px);
+    line-height:1.6;
+    margin:10px 0 18px;
+    padding:6px 0;
+  }
+  .philosophy-quote{
+    font-size:clamp(24px,5.5vw,32px);
+    line-height:1.8;
+    padding:6px 18px 6px 0;
+  }
   .hero-vertical{display:none}
   .section{padding:75px 0}
   .services-head,.portfolio-head{display:block}

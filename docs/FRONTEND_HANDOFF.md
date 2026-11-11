@@ -16,22 +16,30 @@ This handoff documents the visual and structural redesign of **سالن زیبا
 
 ---
 
-## 2. Persian Typography: Estedad Font Integration
+## 2. Persian Typography & Artistic Calligraphy Direction
 
-Vazirmatn has been replaced with **Estedad** for all Persian typography across the platform.
+The typographic system pairs a modern high-legibility sans-serif base with an artistic Persian calligraphic display face.
 
-### Source & Licensing
+### A. Body & Interface Foundation: Estedad
+- **Role:** Body text, navigation links, buttons, booking flow, registration forms, service cards, and admin dashboard.
 - **Font:** Estedad Variable WebFont (`Estedad[wght].woff2`, `Estedad-Regular`, `Estedad-Medium`, `Estedad-SemiBold`)
 - **Author:** Amin Abedi (https://github.com/aminabedi68/Estedad)
-- **License:** SIL Open Font License (OFL) Version 1.1 (retained in `src/assets/fonts/OFL.txt`)
-- **Offline / Local First Delivery:** Local WOFF2 font assets reside in `src/assets/fonts/` and are embedded by `scripts/build-worker.mjs` into the Worker artifact to serve from `'self'` at `/fonts/Estedad-wght.woff2`. A public jsDelivr CDN link is configured as a secondary remote fallback.
+- **License:** SIL Open Font License (OFL) Version 1.1 (`src/assets/fonts/OFL.txt`)
+- **Delivery:** Embedded in Worker artifact, served at `/fonts/Estedad-wght.woff2` with jsDelivr CDN fallback.
+- **Rules:** Minimum 16px body on mobile to prevent iOS zooming; strictly no artificial letter-spacing on cursive Persian text.
 
-### Typographic Specifications
-- **Body:** `font: 400 16px/1.95 var(--sans);` (ensures minimum 16px on mobile to avoid iOS viewport zooming and guarantee high legibility).
-- **Navigation & Actions:** `font-weight: 500; font-size: 13.5px–14.5px;`
-- **Headings:** `font-weight: 500–600; line-height: 1.32–1.45;` (avoids overly bold or heavy heading styles).
-- **No Letter-Spacing on Persian:** Letter-spacing is strictly disabled on cursive Persian text; latin letter-spacing is applied only to uppercase Latin serif accents.
-- **Uniform Application:** Consistently declared across `src/index.html`, `src/admin.html`, and `worker/platform.js` (`simplePage`).
+### B. Artistic Calligraphy Display: Katibeh
+- **Role:** Hero main headline (`.hero h1`), Kimia's Persian brand title (`.brand-name`), and editorial philosophy quote (`.philosophy-quote`).
+- **Font:** Katibeh (`Katibeh-Regular.woff2`)
+- **Origin & Typography:** Authentic Iranian display face blending Thuluth and Naskh calligraphic traditions, originally designed by Borna Rayaneh and adapted for modern web by Google Fonts (https://fonts.google.com/specimen/Katibeh).
+- **License:** SIL Open Font License (OFL) Version 1.1.
+- **Persian Script Fidelity:** Flawlessly shapes Persian-specific characters (ی، ک، گ، چ، پ، ژ), zero-width non-joiners (half-spaces / نیم‌فاصله), and complex ligatures without artifacting.
+- **Delivery:** Embedded locally in `src/assets/fonts/Katibeh-Regular.woff2` and served directly from Worker `/fonts/Katibeh.woff2` with Google Fonts WOFF2 fallback.
+- **Vertical Clearance & Dot Protection:**
+  - Persian calligraphy features steep ascenders and deep descenders with prominent diacritical dots.
+  - Generous line-height (`1.55` in hero headline, `1.85` in philosophy quote, `1.35` in brand title) and vertical padding (`padding: 6px 0` / `8px 0`) prevent ascenders, descenders, and dots from ever clipping.
+  - Sizing and line wrapping are tuned separately for desktop (`clamp(52px, 7.8vw, 92px)`) and mobile (`clamp(38px, 9.5vw, 52px)`).
+  - Preserves natural cursive connections with `letter-spacing: normal` (never uses artificial letter spacing on Persian text).
 
 ---
 
@@ -83,15 +91,15 @@ When implementing SMS gateway and session management in the backend:
 
 | File | Purpose of Modifications |
 | --- | --- |
-| `src/index.html` | Integrated Estedad font (`@font-face` and `--sans`), added customer registration & login modal (`#accountDialog`) with 3-stage journey (Phone, OTP, Profile), dev preview switcher, and desktop/mobile header triggers. Preserved booking form, tracking, concept gallery dialog, and all existing features. |
+| `src/index.html` | Integrated Estedad (`--sans`) and Katibeh (`--calligraphy`) fonts; applied calligraphy to brand title, hero h1, and editorial philosophy quote with vertical clearance; added customer registration & login modal (`#accountDialog`) with 3-stage journey (Phone, OTP, Profile), dev preview switcher, and desktop/mobile header triggers. Preserved booking form, tracking, concept gallery dialog, and all existing features. |
 | `src/admin.html` | Updated typography to Estedad font; preserved all existing form IDs, tables, controls, and script controllers. |
 | `worker/platform.js` | Updated `simplePage` (used for `/services/:slug`, `/privacy`, and 404/403 pages) with Estedad typography. |
-| `worker/index.template.js` | Added `/fonts/Estedad-wght.woff2` to `MEDIA_BASE64` and MIME type resolution (`font/woff2`); updated CSP font-src and style-src to allow `cdn.jsdelivr.net`. |
-| `scripts/build-worker.mjs` | Injected local `src/assets/fonts/Estedad-wght.woff2` base64 into Worker artifact during `npm run build`. |
+| `worker/index.template.js` | Added `/fonts/Estedad-wght.woff2` and `/fonts/Katibeh.woff2` to `MEDIA_BASE64` with MIME type resolution (`font/woff2`); updated CSP font-src and style-src to allow `fonts.gstatic.com` and `cdn.jsdelivr.net`. |
+| `scripts/build-worker.mjs` | Injected local `Estedad-wght.woff2` and `Katibeh-Regular.woff2` base64 into Worker artifact during `npm run build`. |
 | `scripts/vite-preview.mjs` | Removed `X-Frame-Options: DENY` and adjusted CSP `frame-ancestors` in local preview adapter only, allowing Google AI Studio to embed the page in its development iframe while preserving strict production security headers. |
-| `src/assets/fonts/` | Downloaded local Estedad font files (`Estedad-wght.woff2`, `Estedad-Regular.woff2`, `Estedad-Medium.woff2`, `Estedad-SemiBold.woff2`) and SIL Open Font License (`OFL.txt`). |
+| `src/assets/fonts/` | Downloaded local font files (`Katibeh-Regular.woff2`, `Estedad-wght.woff2`, `Estedad-Regular.woff2`, `Estedad-Medium.woff2`, `Estedad-SemiBold.woff2`) and SIL Open Font License (`OFL.txt`). |
 | `package.json` | Added `"lint": "tsc --noEmit"` and generated clean `package-lock.json`. |
-| `docs/FRONTEND_HANDOFF.md` | Comprehensive architectural, design, and integration documentation. |
+| `docs/FRONTEND_HANDOFF.md` | Comprehensive architectural, design, typographic licensing, and integration documentation. |
 
 ---
 

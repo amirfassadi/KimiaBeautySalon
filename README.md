@@ -37,6 +37,7 @@ npx tsc --noEmit
 | `.openai/hosting.json` | شناسه و تنظیمات سایت موجود |
 | `docs/OPERATIONS.md` | راه‌اندازی تولید و محدودیت‌ها |
 | `docs/SELF_HOSTING.md` | اجرای مستقل روی VPS، PostgreSQL، systemd، Nginx، HTTPS و backup |
+| `docs/CICD.md` | انتشار main روی VPS پس از تست، کلید محدود SSH، بکاپ و rollback |
 | `docs/SELF_HOSTING_REPORT.md` | شواهد محلی، محدودیت‌ها و مراحل باقی‌ماندهٔ VPS |
 | `docs/CONSOLIDATION.md` | منشأ فایل‌ها و نتیجه یکپارچه‌سازی |
 | `archive/KimiaBeauty/` | نسخه قبلی سایت و مستندات SmartCore، فقط برای مرجع |

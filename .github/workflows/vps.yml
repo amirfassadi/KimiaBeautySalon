@@ -1,0 +1,90 @@
+name: Test and deploy Kimia
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kimia-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: ci-only-postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npm run lint
+      - run: bash scripts/test-deploy.sh
+      - name: Test isolated PostgreSQL 18
+        env:
+          PGPASSWORD: ci-only-postgres
+          KIMIA_TEST_DATABASE_URL: postgresql://kimia_ci@127.0.0.1:5432/kimia_test_ci
+          KIMIA_TEST_DATABASE_PASSWORD: ci-only-application
+        run: |
+          psql -X -h 127.0.0.1 -U postgres -d postgres -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE anon NOLOGIN;
+          CREATE ROLE authenticated NOLOGIN;
+          CREATE ROLE service_role NOLOGIN;
+          CREATE ROLE kimia_ci LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT PASSWORD 'ci-only-application';
+          CREATE DATABASE kimia_test_ci OWNER kimia_ci;
+          SQL
+          node scripts/test-postgres-integration.mjs
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.KIMIA_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: production
+    steps:
+      - name: Deploy tested revision through restricted SSH key
+        env:
+          DEPLOY_KEY: ${{ secrets.KIMIA_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.KIMIA_SSH_KNOWN_HOSTS }}
+          REVISION: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$DEPLOY_KEY" && test -n "$KNOWN_HOSTS"
+          install -d -m 700 "$HOME/.ssh"
+          trap 'rm -f "$HOME/.ssh/kimia_key"' EXIT
+          printf '%s\n' "$DEPLOY_KEY" > "$HOME/.ssh/kimia_key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/kimia_key" "$HOME/.ssh/known_hosts"
+          ssh -T -p 22022 -i "$HOME/.ssh/kimia_key" \
+            -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=15 -o ServerAliveInterval=20 -o ServerAliveCountMax=3 \
+            kimia-deploy@87.107.54.244 "deploy $REVISION"
+      - name: Check public HTTPS
+        run: |
+          curl --fail --silent --show-error --retry 3 --retry-delay 2 \
+            https://kbkimiabeauty.ir/api/health \
+            | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d.get("ok") is True and d.get("database_ready") is True and d.get("booking_enabled") is False and d.get("customer_auth_enabled") is False; print("Public HTTPS health passed")'

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import vm from 'node:vm';
 import worker from '../dist/server/index.js';
 
 const base='https://kbkimiabeauty.ir';
@@ -40,13 +41,38 @@ assert.match(home,/آرایشگاه زنانه در صادقیه/);
 assert.match(home,/آیت‌الله کاشانی/);
 assert.doesNotMatch(home,/__LOCAL_SEARCH__|__SALON_DIRECTIONS__/);
 function checkDirections(page) {
- for(const provider of ['google','neshan','balad'])assert.equal((page.match(new RegExp('data-map-provider="'+provider+'"','g'))||[]).length,1);
+ for(const provider of ['google','neshan','balad'])assert.equal((page.match(new RegExp('<a data-map-provider="'+provider+'"','g'))||[]).length,1);
  assert.ok(page.includes('href="https://maps.app.goo.gl/T3swhBD3iiGWLzvk8"'));
  assert.ok(page.includes('href="https://neshan.org/maps/share/35.7318808,51.3303384"'));
  assert.ok(page.includes('href="https://balad.ir/directions/driving?destination=51.3303384%2C35.7318808"'));
  assert.doesNotMatch(page,/google\.com\/maps\/search/,'Navigation must point to the confirmed salon, not an address search.');
 }
 checkDirections(home);
+// Exercise the generated browser script: desktop keeps HTTPS; installed-app links
+// on mobile must stay in the current tab and preserve the exact destination.
+for(const [userAgent,platform,maxTouchPoints,expected] of [
+ ['Mozilla/5.0 (Linux; Android 14) Chrome/130','Linux armv8l',5,'intent://'],
+ ['Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)','iPhone',5,'neshan://'],
+ ['Mozilla/5.0 (Macintosh; Intel Mac OS X)','MacIntel',5,'neshan://'],
+ ['Mozilla/5.0 (Windows NT 10.0)','Win32',0,'https://neshan.org/'],
+]) {
+ const anchor=home.match(/<a data-map-provider="neshan"[^>]+>/)[0];
+ const attr=name=>anchor.match(new RegExp(' '+name+'="([^"]+)"'))[1].replaceAll('&amp;','&');
+ const link={href:attr('href'),dataset:{androidHref:attr('data-android-href'),iosHref:attr('data-ios-href')},target:'_blank',removeAttribute(name){delete this[name]},setAttribute(name,value){this[name]=value}};
+ const nav={querySelector:()=>link};
+ const fallback={previousElementSibling:nav,hidden:true,style:{display:'none'}};
+ const script=home.match(/<script data-salon-navigation>([\s\S]*?)<\/script>/)[1];
+ vm.runInNewContext(script,{document:{currentScript:{previousElementSibling:fallback}},navigator:{userAgent,platform,maxTouchPoints}});
+ assert.ok(link.href.startsWith(expected));
+ if(expected==='intent://') {
+  assert.ok(link.href.includes('lat=35.7318808&lng=51.3303384'));
+  assert.ok(link.href.includes('package=org.rajman.neshan.traffic.tehran.navigator'));
+  assert.ok(link.href.includes('S.browser_fallback_url='+encodeURIComponent(attr('href'))));
+ }
+ if(expected==='neshan://')assert.ok(link.href.includes('destination=35.7318808,51.3303384'));
+ assert.equal(fallback.hidden,expected.startsWith('https'));
+ assert.equal(link.target,expected.startsWith('https')?'_blank':undefined);
+}
 assert.deepEqual(salon.openingHoursSpecification,[{'@type':'OpeningHoursSpecification',dayOfWeek:'https://schema.org/Saturday',opens:'09:00',closes:'18:00'}]);
 assert.equal('aggregateRating' in salon,false);
 assert.equal('image' in salon,false,'Concept images must not be labeled as real salon photos.');

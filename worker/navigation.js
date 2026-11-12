@@ -11,6 +11,7 @@ function salonDirections() {
   ['neshan','نشان',neshanWeb,'#75baff'],
   // Balad's driving page uses GeoJSON order: longitude, latitude.
   ['balad','بلد',`https://balad.ir/directions/driving?destination=${longitude}%2C${latitude}`,'#ff9696'],
+  ['waze','ویز',`https://waze.com/ul?ll=${latitude}%2C${longitude}&navigate=yes&utm_source=kbkimiabeauty.ir`,'#7ee5ef'],
  ];
  return '<nav class="salon-directions" aria-label="انتخاب مسیریاب سالن">'+providers.map(([id,label,url,color])=>`<a data-map-provider="${id}" ${id==='neshan'?`data-android-href="${escapeHtml(neshanAndroid)}" data-ios-href="${escapeHtml(neshanIos)}"`:''} href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="باز کردن مکان سالن در ${label}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M12 22s8-8 8-14a8 8 0 0 0-16 0c0 6 8 14 8 14Z" fill="${color}"/><path d="m9 12 3-7 3 7-3-1-3 1Z" fill="#10241b"/></svg><span>${label}</span></a>`).join('')+'</nav>'+`<a data-neshan-web-fallback hidden href="${escapeHtml(neshanWeb)}" target="_blank" rel="noopener noreferrer" style="display:none;font-size:12px;color:#d8b675;text-decoration:underline">نسخهٔ وب نشان ↗</a><script data-salon-navigation>(${enhanceSalonDirections.toString()})(document.currentScript.previousElementSibling.previousElementSibling,navigator,document.currentScript.previousElementSibling);</script>`;
 }
@@ -20,6 +21,8 @@ function enhanceSalonDirections(nav,device,fallback) {
  const android=/Android/i.test(device.userAgent);
  const ios=/iPhone|iPad|iPod/i.test(device.userAgent)||(device.platform==='MacIntel'&&device.maxTouchPoints>1);
  if(!android&&!ios)return;
+ // Universal app links should open from the user's current browsing context.
+ nav.querySelector('[data-map-provider="waze"]').removeAttribute('target');
  link.href=android?link.dataset.androidHref:link.dataset.iosHref;
  link.removeAttribute('target');
  link.setAttribute('aria-label','باز کردن برنامهٔ نشان برای مسیر سالن');

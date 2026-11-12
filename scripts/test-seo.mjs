@@ -41,10 +41,11 @@ assert.match(home,/آرایشگاه زنانه در صادقیه/);
 assert.match(home,/آیت‌الله کاشانی/);
 assert.doesNotMatch(home,/__LOCAL_SEARCH__|__SALON_DIRECTIONS__/);
 function checkDirections(page) {
- for(const provider of ['google','neshan','balad'])assert.equal((page.match(new RegExp('<a data-map-provider="'+provider+'"','g'))||[]).length,1);
+ for(const provider of ['google','neshan','balad','waze'])assert.equal((page.match(new RegExp('<a data-map-provider="'+provider+'"','g'))||[]).length,1);
  assert.ok(page.includes('href="https://maps.app.goo.gl/T3swhBD3iiGWLzvk8"'));
  assert.ok(page.includes('href="https://neshan.org/maps/share/35.7318808,51.3303384"'));
  assert.ok(page.includes('href="https://balad.ir/directions/driving?destination=51.3303384%2C35.7318808"'));
+ assert.ok(page.includes('href="https://waze.com/ul?ll=35.7318808%2C51.3303384&amp;navigate=yes&amp;utm_source=kbkimiabeauty.ir"'));
  assert.doesNotMatch(page,/google\.com\/maps\/search/,'Navigation must point to the confirmed salon, not an address search.');
 }
 checkDirections(home);
@@ -59,7 +60,8 @@ for(const [userAgent,platform,maxTouchPoints,expected] of [
  const anchor=home.match(/<a data-map-provider="neshan"[^>]+>/)[0];
  const attr=name=>anchor.match(new RegExp(' '+name+'="([^"]+)"'))[1].replaceAll('&amp;','&');
  const link={href:attr('href'),dataset:{androidHref:attr('data-android-href'),iosHref:attr('data-ios-href')},target:'_blank',removeAttribute(name){delete this[name]},setAttribute(name,value){this[name]=value}};
- const nav={querySelector:()=>link};
+ const waze={target:'_blank',removeAttribute(name){delete this[name]}};
+ const nav={querySelector:selector=>selector.includes('waze')?waze:link};
  const fallback={previousElementSibling:nav,hidden:true,style:{display:'none'}};
  const script=home.match(/<script data-salon-navigation>([\s\S]*?)<\/script>/)[1];
  vm.runInNewContext(script,{document:{currentScript:{previousElementSibling:fallback}},navigator:{userAgent,platform,maxTouchPoints}});
@@ -72,6 +74,7 @@ for(const [userAgent,platform,maxTouchPoints,expected] of [
  if(expected==='neshan://')assert.ok(link.href.includes('destination=35.7318808,51.3303384'));
  assert.equal(fallback.hidden,expected.startsWith('https'));
  assert.equal(link.target,expected.startsWith('https')?'_blank':undefined);
+ assert.equal(waze.target,expected.startsWith('https')?'_blank':undefined);
 }
 assert.deepEqual(salon.openingHoursSpecification,[{'@type':'OpeningHoursSpecification',dayOfWeek:'https://schema.org/Saturday',opens:'09:00',closes:'18:00'}]);
 assert.equal('aggregateRating' in salon,false);

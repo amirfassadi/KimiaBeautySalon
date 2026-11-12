@@ -52,7 +52,7 @@
   --nastaliq:'IranNastaliq','Estedad',serif;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;overflow-x:hidden}
+html{scroll-behavior:smooth;overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{
   margin:0;
   overflow-x:hidden;
@@ -1465,6 +1465,10 @@ h1,h2,h3,p{margin-top:0}
 
 @media(max-width:680px){
   .nav{height:96px}
+  .brand{min-width:0;gap:10px}
+  .brand-mark,.mobile-toggle{flex-shrink:0}
+  .brand-text{min-width:0;gap:6px}
+  .brand-en{font-size:clamp(8px,2.4vw,11px);letter-spacing:0.12em;white-space:nowrap}
   .nav-links{
     display:none;
     position:absolute;
@@ -1504,18 +1508,25 @@ h1,h2,h3,p{margin-top:0}
     background:linear-gradient(0deg, #070f0c 0%, rgba(7,15,12,0.85) 45%, rgba(7,15,12,0.3) 100%);
   }
   .hero-copy{width:100%;padding-top:120px}
-  .brand-name{font-size:26px;line-height:2.4;padding:1px 0}
+  /* Use the UI font on narrow screens to keep Persian headings readable. */
+  .brand-name{
+    font:500 clamp(16px,4.5vw,22px)/1.8 var(--sans);
+    transform:none;
+    padding:0;
+    white-space:nowrap;
+  }
   .hero h1{
-    font-size:clamp(34px,8.8vw,46px);
-    line-height:2.2;
+    font:500 clamp(28px,7.6vw,42px)/1.8 var(--sans);
     margin:8px 0 16px;
     padding:6px 0;
+    overflow-wrap:break-word;
   }
+  .hero h1 em{font-family:var(--sans);font-weight:inherit}
   .philosophy-quote{
-    font-size:clamp(22px,5vw,28px);
-    line-height:2.2;
+    font:400 clamp(20px,5vw,28px)/2 var(--sans);
     padding:6px 18px 6px 0;
   }
+  .philosophy-quote em{font-family:var(--sans)}
   .hero-vertical{display:none}
   .section{padding:75px 0}
   .services-head,.portfolio-head{display:block}
@@ -1537,23 +1548,27 @@ h1,h2,h3,p{margin-top:0}
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:12px 6vw;
+    gap:10px;
+    padding:12px 4vw;
     background:rgba(7,15,12,0.92);
     border-top:1px solid rgba(216,182,117,0.35);
     backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px);
   }
   .mobile-bar>a:first-child{
-    font-size:14px;
+    font-size:clamp(11px,3vw,14px);
     font-weight:600;
     color:var(--gold);
     display:flex;
     align-items:center;
     gap:6px;
+    white-space:nowrap;
   }
   .mobile-bar .button{
-    padding:9px 20px;
+    width:auto;
+    padding:9px 12px;
     font-size:13px;
+    white-space:nowrap;
   }
   body{padding-bottom:74px}
 
@@ -1574,7 +1589,6 @@ h1,h2,h3,p{margin-top:0}
 }
 
 @media(max-width:390px){
-  .hero h1{font-size:38px}
   .hero-actions{flex-direction:column;align-items:stretch}
   .button{width:100%}
 }

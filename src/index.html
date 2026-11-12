@@ -52,7 +52,7 @@
   --nastaliq:'IranNastaliq','Estedad',serif;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;overflow-x:hidden}
+html{scroll-behavior:smooth;overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{
   margin:0;
   overflow-x:hidden;
@@ -487,6 +487,8 @@ h1,h2,h3,p{margin-top:0}
 .service-footer{
   margin-top:auto;
   display:flex;
+  flex-wrap:wrap;
+  gap:12px;
   align-items:center;
   justify-content:space-between;
   padding-top:18px;
@@ -501,6 +503,8 @@ h1,h2,h3,p{margin-top:0}
   font-weight:500;
 }
 .service-detail-link:hover{border-color:#73562a}
+.service-subpages{margin:0 0 24px;padding-inline-start:20px;color:#73562a;font-size:14px;line-height:2}
+.service-subpages a{text-decoration:underline;text-underline-offset:4px}
 .service-choice{
   border:0;
   background:none;
@@ -1465,6 +1469,10 @@ h1,h2,h3,p{margin-top:0}
 
 @media(max-width:680px){
   .nav{height:96px}
+  .brand{min-width:0;gap:10px}
+  .brand-mark,.mobile-toggle{flex-shrink:0}
+  .brand-text{min-width:0;gap:6px}
+  .brand-en{font-size:clamp(8px,2.4vw,11px);letter-spacing:0.12em;white-space:nowrap}
   .nav-links{
     display:none;
     position:absolute;
@@ -1504,18 +1512,25 @@ h1,h2,h3,p{margin-top:0}
     background:linear-gradient(0deg, #070f0c 0%, rgba(7,15,12,0.85) 45%, rgba(7,15,12,0.3) 100%);
   }
   .hero-copy{width:100%;padding-top:120px}
-  .brand-name{font-size:26px;line-height:2.4;padding:1px 0}
+  /* Use the UI font on narrow screens to keep Persian headings readable. */
+  .brand-name{
+    font:500 clamp(16px,4.5vw,22px)/1.8 var(--sans);
+    transform:none;
+    padding:0;
+    white-space:nowrap;
+  }
   .hero h1{
-    font-size:clamp(34px,8.8vw,46px);
-    line-height:2.2;
+    font:500 clamp(28px,7.6vw,42px)/1.8 var(--sans);
     margin:8px 0 16px;
     padding:6px 0;
+    overflow-wrap:break-word;
   }
+  .hero h1 em{font-family:var(--sans);font-weight:inherit}
   .philosophy-quote{
-    font-size:clamp(22px,5vw,28px);
-    line-height:2.2;
+    font:400 clamp(20px,5vw,28px)/2 var(--sans);
     padding:6px 18px 6px 0;
   }
+  .philosophy-quote em{font-family:var(--sans)}
   .hero-vertical{display:none}
   .section{padding:75px 0}
   .services-head,.portfolio-head{display:block}
@@ -1537,23 +1552,27 @@ h1,h2,h3,p{margin-top:0}
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:12px 6vw;
+    gap:10px;
+    padding:12px 4vw;
     background:rgba(7,15,12,0.92);
     border-top:1px solid rgba(216,182,117,0.35);
     backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px);
   }
   .mobile-bar>a:first-child{
-    font-size:14px;
+    font-size:clamp(11px,3vw,14px);
     font-weight:600;
     color:var(--gold);
     display:flex;
     align-items:center;
     gap:6px;
+    white-space:nowrap;
   }
   .mobile-bar .button{
-    padding:9px 20px;
+    width:auto;
+    padding:9px 12px;
     font-size:13px;
+    white-space:nowrap;
   }
   body{padding-bottom:74px}
 
@@ -1574,7 +1593,6 @@ h1,h2,h3,p{margin-top:0}
 }
 
 @media(max-width:390px){
-  .hero h1{font-size:38px}
   .hero-actions{flex-direction:column;align-items:stretch}
   .button{width:100%}
 }
@@ -1652,9 +1670,9 @@ __SEO_HEAD__</head>
       <div class="services-head">
         <div>
           <span class="section-label">OUR SERVICES</span>
-          <h2 class="section-title">زیبایی به سبک تو</h2>
+          <h2 class="section-title">خدمات زیبایی در صادقیه و غرب تهران</h2>
         </div>
-        <p class="section-intro">برای انتخاب خدمت و هماهنگی زمان، درخواستت را بفرست. جزئیات خدمات با نمونه‌کارهای واقعی مجموعه تکمیل می‌شود.</p>
+        <p class="section-intro">خدمات سالن کیمیا را ببین و برای جزئیات هر خدمت، قیمت به‌روز و هماهنگی زمان مراجعه با سالن تماس بگیر.</p>
       </div>
       <div class="services-grid"><!-- SERVICES_START -->
         <article class="service">
@@ -1931,6 +1949,8 @@ __SEO_HEAD__</head>
   </section>
 
   <!-- Contact Section -->
+  <section class="section"><div class="shell"><h2 class="section-title">خدمات زیبایی بانوان در صادقیه و غرب تهران</h2>__LOCAL_SEARCH__</div></section>
+
   <section class="section contact-section" id="contact">
     <div class="shell contact-layout">
       <div>
@@ -1959,12 +1979,13 @@ __SEO_HEAD__</head>
         </div>
       </div>
 
-      <a class="map-box" href="https://www.google.com/maps/search/?api=1&amp;query=%D8%AA%D9%87%D8%B1%D8%A7%D9%86%20%D8%B5%D8%A7%D8%AF%D9%82%DB%8C%D9%87%20%D8%AE%DB%8C%D8%A7%D8%A8%D8%A7%D9%86%20%D9%BE%DB%8C%D8%A7%D9%85%D8%A8%D8%B1%20%D8%B4%D8%B1%D9%82%DB%8C%20%D8%AE%DB%8C%D8%A7%D8%A8%D8%A7%D9%86%20%D8%B4%D9%87%D8%A8%20%DA%AF%D9%84%D8%B3%D8%AA%D8%A7%D9%86%2012%20%D9%BE%D9%84%D8%A7%DA%A9%2011" target="_blank" rel="noreferrer">
-        <span class="map-pin">⌖</span>
-        <strong>مسیریابی روی گوگل‌مپ</strong>
+      <div class="map-box">
+        <span class="map-pin" aria-hidden="true">⌖</span>
+        <strong>مسیر تو تا کیمیا</strong>
         <p>تهران، صادقیه، خیابان پیامبر شرقی، خیابان شهاب، گلستان ۱۲، پلاک ۱۱</p>
-        <span class="map-link">باز کردن نقشه و مسیریابی ↗</span>
-      </a>
+        __SALON_DIRECTIONS__
+        <span class="map-link">مسیریاب دلخواهت را انتخاب کن</span>
+      </div>
     </div>
   </section>
 </main>

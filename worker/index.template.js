@@ -1,5 +1,6 @@
 const PAGE_HTML = __PAGE_HTML__;
 const ADMIN_HTML = __ADMIN_HTML__;
+__SEO_CODE__
 __PLATFORM_CODE__
 const MEDIA_BASE64 = {
   "/media/atelier.webp": __HERO_BASE64__,
@@ -87,8 +88,12 @@ async function createBooking(request, env) {
   }catch(e){return json({message:e instanceof ApiError?e.message:'ثبت درخواست انجام نشد.'},e instanceof ApiError?e.status:502)}
 }
 
-export default {
+const worker = {
   async fetch(request, env) {
+    if (request.method === 'HEAD') {
+      const response = await worker.fetch(new Request(request, {method: 'GET'}), env);
+      return new Response(null, {status: response.status, statusText: response.statusText, headers: response.headers});
+    }
     const routed=await platformRoute(request,env);
     if(routed)return routed;
     const url = new URL(request.url);
@@ -109,3 +114,4 @@ export default {
     return new Response("Not found", { status: 404, headers: secureHeaders({ "content-type": "text/plain; charset=utf-8" }) });
   },
 };
+export default worker;

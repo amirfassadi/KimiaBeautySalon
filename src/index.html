@@ -1538,6 +1538,39 @@ h1,h2,h3,p{margin-top:0}
   html{scroll-behavior:auto}
   *,*:before,*:after{transition:none!important;animation:none!important}
 }
+/* Seasonal offer: an independent, dismissible card, above the mobile contact bar. */
+.friday-offer[hidden]{display:none}
+.friday-offer{
+  position:fixed;inset:auto 24px 24px auto;z-index:60;
+  width:min(354px,calc(100vw - 32px));max-height:calc(100dvh - 48px);overflow:auto;
+  padding:16px;border:1px solid var(--line-gold);border-radius:18px;
+  background:linear-gradient(145deg,#10271d,#070f0c 80%);
+  box-shadow:0 20px 65px rgba(0,0,0,.45);animation:offer-enter .35s ease-out;
+}
+.friday-offer-close{
+  position:absolute;inset:4px 4px auto auto;z-index:1;display:grid;place-items:center;
+  width:44px;height:44px;border:1px solid var(--line-gold);border-radius:50%;
+  background:var(--bg-dark);color:var(--gold);font-size:27px;cursor:pointer;
+}
+.friday-offer-image{aspect-ratio:1.95;overflow:hidden;border-radius:10px;background:var(--bg-emerald)}
+.friday-offer-image svg{display:block;width:100%;height:100%}
+.friday-offer-label{margin:14px 0 5px;color:var(--gold);font-size:14px}
+.friday-offer h2{margin:0;color:var(--text-light);font:600 23px/1.7 var(--sans)}
+.friday-offer h2 strong{display:block;color:var(--gold);font-weight:700}
+.friday-offer-copy{margin:8px 0;color:var(--text-light-muted);font-size:16px;line-height:1.9}
+.friday-offer-guide{margin:12px 0 16px;color:var(--text-light);font-size:14px;line-height:1.9}
+.friday-offer-actions{display:grid;gap:9px}
+.friday-offer-actions a{display:block;padding:11px 12px;border:1px solid var(--gold);border-radius:9px;text-align:center;font-size:16px;font-weight:600;color:var(--gold)}
+.friday-offer-actions a:first-child{background:var(--gold);color:var(--bg-dark)}
+.friday-offer-actions a:hover{background:var(--gold-hover);color:var(--bg-dark)}
+.friday-offer-phone{display:block;text-align:center;margin-top:12px;font-size:14px;color:var(--text-light-muted)}
+@keyframes offer-enter{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:760px){
+  .friday-offer{inset:auto 16px calc(86px + env(safe-area-inset-bottom)) auto;max-height:calc(100dvh - 110px - env(safe-area-inset-bottom));width:min(354px,calc(100vw - 32px));padding:14px}
+  .friday-offer-image{aspect-ratio:2.4}
+  .friday-offer h2{font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){.friday-offer{animation:none}}
 </style>
 __SEO_HEAD__</head>
 <body>
@@ -1941,6 +1974,60 @@ __SEO_HEAD__</head>
   </a>
   <a class="button" href="tel:+989307897825">تماس برای هماهنگی ←</a>
 </div>
+
+<!-- Conceptual campaign photograph supplied by the salon; not a portfolio item. -->
+<aside class="friday-offer" id="fridayOffer" aria-labelledby="fridayOfferTitle" hidden>
+  <button class="friday-offer-close" id="closeFridayOffer" type="button" aria-label="بستن پیشنهاد بلک فرایدی">×</button>
+  <div class="friday-offer-image">
+    <!-- Frame only the copper hairstyle from the supplied reference screenshot. -->
+    <svg viewBox="1710 552 276 145" preserveAspectRatio="xMidYMid slice" role="img" aria-label="تصویر تبلیغاتی مدل موی کوتاه مسی" xmlns="http://www.w3.org/2000/svg">
+      <image href="/media/black-friday-haircut.jpg" width="2048" height="1143" preserveAspectRatio="none" />
+    </svg>
+  </div>
+  <p class="friday-offer-label">ویژهٔ بلک فرایدی · جمعه ۶ آذر</p>
+  <h2 id="fridayOfferTitle">این جمعه، <strong>کوتاهی مو مهمان ما</strong></h2>
+  <p class="friday-offer-copy">یک تغییر زیبا، هدیهٔ سالن زیبایی کیمیا به شما.</p>
+  <p class="friday-offer-guide">برای هماهنگی نوبت، با سالن تماس بگیرید یا در اینستاگرام پیام بدهید.</p>
+  <div class="friday-offer-actions">
+    <a href="tel:+989307897825">تماس با سالن</a>
+    <a href="https://instagram.com/kb.kimiabeauty" target="_blank" rel="noopener noreferrer">پیام در اینستاگرام</a>
+  </div>
+  <a class="friday-offer-phone" href="tel:+989307897825" dir="ltr">۰۹۳۰ ۷۸۹ ۷۸۲۵</a>
+</aside>
+<script>
+(() => {
+  const card = document.getElementById('fridayOffer');
+  const close = document.getElementById('closeFridayOffer');
+  const sessionKey = 'kimia-black-friday-2026-seen';
+  const expiresAt = Date.parse('2026-11-28T00:00:00+03:30');
+  let timer;
+  let expiryTimer;
+  const dismiss = () => {
+    clearTimeout(timer);
+    clearTimeout(expiryTimer);
+    if (card.contains(document.activeElement)) document.activeElement.blur();
+    card.hidden = true;
+  };
+  close.addEventListener('click', dismiss);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !card.hidden) dismiss();
+  });
+  let seen = false;
+  try { seen = sessionStorage.getItem(sessionKey) === '1'; } catch {}
+  if (seen || Date.now() >= expiresAt) return;
+  const show = () => {
+    if (Date.now() >= expiresAt) return;
+    if (document.hidden || document.querySelector('dialog[open]')) {
+      timer = setTimeout(show, 1000);
+      return;
+    }
+    card.hidden = false;
+    try { sessionStorage.setItem(sessionKey, '1'); } catch {}
+    expiryTimer = setTimeout(dismiss, Math.min(expiresAt - Date.now(), 2147483647));
+  };
+  timer = setTimeout(show, 3500);
+})();
+</script>
 
 <!-- Accessible Image Dialog -->
 <dialog class="gallery-dialog" id="galleryDialog" aria-label="نمایش تصویر">

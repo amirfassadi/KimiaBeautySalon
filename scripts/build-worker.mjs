@@ -22,9 +22,13 @@ const [html, hero, portrait, session, template, manifest, admin, platform, fontV
   readFile(path.join(root, 'src/assets/fonts/IranNastaliq.woff2')),
 ]);
 const heroPath = '/media/hero-' + createHash('sha256').update(hero).digest('hex').slice(0, 12) + '.webp';
+const offerImage = await readFile(path.join(root, 'src/assets/black-friday-haircut.jpg'));
+const offerImagePath = '/media/black-friday-' + createHash('sha256').update(offerImage).digest('hex').slice(0, 12) + '.jpg';
 const seo = await readFile(path.join(root, 'worker/seo.js'), 'utf8') + '\n' + await readFile(path.join(root, 'worker/service-guides.js'), 'utf8') + '\n' + await readFile(path.join(root, 'worker/navigation.js'), 'utf8');
 const worker = template
-  .replace('__PAGE_HTML__', () => JSON.stringify(html.replaceAll('/media/atelier.webp', heroPath)))
+  .replace('__PAGE_HTML__', () => JSON.stringify(html.replaceAll('/media/atelier.webp', heroPath).replaceAll('/media/black-friday-haircut.jpg', offerImagePath)))
+  .replace('__OFFER_MEDIA_PATH__', JSON.stringify(offerImagePath))
+  .replace('__OFFER_BASE64__', JSON.stringify(offerImage.toString('base64')))
   .replace('__ADMIN_HTML__', () => JSON.stringify(admin))
   .replace('__PLATFORM_CODE__', () => platform)
   .replace('__SEO_CODE__', () => seo)

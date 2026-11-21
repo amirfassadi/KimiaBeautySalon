@@ -3,6 +3,7 @@ const ADMIN_HTML = __ADMIN_HTML__;
 __SEO_CODE__
 __PLATFORM_CODE__
 const MEDIA_BASE64 = {
+  [__OFFER_MEDIA_PATH__]: __OFFER_BASE64__,
   "/media/atelier.webp": __HERO_BASE64__,
   [__HERO_MEDIA_PATH__]: __HERO_VERSIONED_BASE64__,
   "/media/portrait.webp": __PORTRAIT_BASE64__,
@@ -103,7 +104,7 @@ const worker = {
     }
     if (["GET", "HEAD"].includes(method) && Object.hasOwn(MEDIA_BASE64, url.pathname)) {
       const bytes = Uint8Array.from(atob(MEDIA_BASE64[url.pathname]), (char) => char.charCodeAt(0));
-      const mime = url.pathname.endsWith(".woff2") ? "font/woff2" : "image/webp";
+      const mime = url.pathname.endsWith(".woff2") ? "font/woff2" : url.pathname.endsWith(".jpg") ? "image/jpeg" : "image/webp";
       return new Response(bytes, { headers: secureHeaders({ "content-type": mime, "cache-control": "public, max-age=31536000, immutable" }) });
     }
     if (url.pathname === "/api/health" && method === "GET") {

@@ -142,6 +142,24 @@ for(const [slug,keyword,faq,parent] of landingPages) {
 }
 assert.equal(titles.size,landingPages.length);
 assert.equal(descriptions.size,landingPages.length);
+// The decision guides must remain usable without client JS: each shortcut
+// resolves, tables have accessible headers and every service link is available.
+for(const slug of ['haircut','hair-color','nails']) {
+ const page=await (await call('/services/'+slug)).text();
+ const shortcuts=page.match(/<nav class="service-guide-nav"[\s\S]*?<\/nav>/)?.[0];
+ assert.ok(shortcuts,'Decision guide shortcuts missing for '+slug);
+ for(const [,id] of shortcuts.matchAll(/href="#([^"]+)"/g)) {
+  assert.equal(page.split('id="'+id+'"').length-1,1,'Shortcut must resolve once: '+id);
+ }
+ assert.match(page,/<caption>[^<]+<\/caption>/);
+ assert.match(page,/<th scope="col">/);
+ assert.match(page,/<th scope="row">/);
+ assert.ok(page.includes('href="https://instagram.com/kb.kimiabeauty"'));
+ for(const [,path] of page.matchAll(/href="(\/services\/[a-z-]+)"/g)) {
+  assert.equal((await call(path)).status,200,'Broken guide destination '+path);
+ }
+ assert.doesNotMatch(page,/aggregateRating|priceCurrency|FAQPage/,'Do not invent reviews, prices or FAQ rich-result eligibility.');
+}
 assert.doesNotMatch(home,/<option value="(?:haircut|hair-color|eyelash-extensions)"/,'Informational pages must not become booking IDs.');
 
 // General hair photos cannot be presented as a specific haircut or color job.
@@ -162,6 +180,7 @@ services.find(s=>s.slug==='haircut').is_active=false;
 assert.equal((await call('/services/haircut')).status,404);
 assert.doesNotMatch(await (await call('/')).text(),/href="\/services\/haircut"/);
 assert.doesNotMatch(await (await call('/sitemap.xml')).text(),/services\/haircut/);
+assert.doesNotMatch(await (await call('/services/hair-color')).text(),/href="\/services\/haircut"/,'Contextual links must respect inactive services.');
 services.find(s=>s.slug==='hair').is_active=false;
 services.find(s=>s.slug==='eyes').is_active=false;
 for(const slug of ['hair','haircut','hair-color','eyes','eyelash-extensions']) {

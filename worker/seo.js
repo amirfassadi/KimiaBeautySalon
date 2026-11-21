@@ -1,11 +1,11 @@
 // Inlined by build-worker.mjs; shared by the Sites and standalone runtimes.
 const SERVICE_SEARCH_CONTENT = {
- haircut: {parent_slug:'hair',name:'کوتاهی مو',heading:'کوتاهی مو زنانه در غرب تهران و صادقیه',description:'کوتاهی مو زنانه در سالن کیمیا در صادقیه، غرب تهران؛ راهنمای انتخاب مدل، هماهنگی طول و فرم مو، دریافت قیمت به‌روز و تماس برای نوبت.'},
- 'hair-color': {parent_slug:'hair',name:'رنگ مو',heading:'رنگ مو در غرب تهران و صادقیه',description:'رنگ مو در سالن زیبایی کیمیا در صادقیه، غرب تهران؛ راهنمای انتخاب رنگ، بررسی سابقه رنگ مو، عوامل هزینه و تماس برای هماهنگی مراجعه.'},
+ haircut: {parent_slug:'hair',name:'کوتاهی مو',heading:'کوتاهی مو زنانه در غرب تهران و صادقیه',description:'کوتاهی مو زنانه در کیمیا، صادقیه و پیامبر شرقی؛ راهنمای انتخاب مدل کوتاه و لایه‌ای، عوامل قیمت و هماهنگی نوبت با سالن در غرب تهران.'},
+ 'hair-color': {parent_slug:'hair',name:'رنگ مو',heading:'رنگ مو در غرب تهران و صادقیه',description:'رنگ مو در کیمیا، صادقیه و غرب تهران؛ مقایسه رنگ کامل، رنگ ریشه، هایلایت و رنگساژ، عوامل هزینه و تماس برای بررسی مو و هماهنگی نوبت.'},
  'eyelash-extensions': {parent_slug:'eyes',name:'کاشت مژه و اکستنشن مژه',heading:'کاشت مژه و اکستنشن مژه در غرب تهران و صادقیه',description:'کاشت مژه و اکستنشن مژه در سالن کیمیا، صادقیه و غرب تهران؛ انتخاب ظاهر دلخواه، پرسش‌های پیش از مراجعه، عوامل هزینه و تماس برای هماهنگی.'},
  makeup: {heading:'میکاپ و گریم در صادقیه و غرب تهران', description:'میکاپ و گریم در سالن زیبایی کیمیا در صادقیه، غرب تهران؛ برای بررسی سبک آرایش، جزئیات خدمت و هماهنگی زمان با سالن تماس بگیرید.'},
  hair: {heading:'خدمات مو در صادقیه و غرب تهران', description:'خدمات مو در سالن زیبایی کیمیا، صادقیه و غرب تهران؛ برای انتخاب خدمت، بررسی مدل دلخواه و هماهنگی زمان با سالن تماس بگیرید.'},
- nails: {heading:'کاشت ناخن در غرب تهران و صادقیه', description:'کاشت و طراحی ناخن در سالن زیبایی کیمیا در صادقیه، غرب تهران، خیابان پیامبر شرقی؛ مشاهده راهنمای انتخاب طرح، نشانی سالن و تماس برای قیمت و هماهنگی نوبت.'},
+ nails: {heading:'کاشت ناخن در غرب تهران و صادقیه', description:'کاشت ناخن در کیمیا، صادقیه و پیامبر شرقی؛ راهنمای تفاوت کاشت، ترمیم و ژلیش، انتخاب فرم و طرح، عوامل قیمت و هماهنگی نوبت در غرب تهران.'},
  eyes: {heading:'خدمات ابرو و مژه در صادقیه و غرب تهران', description:'خدمات ابرو و مژه در سالن زیبایی کیمیا در صادقیه، غرب تهران؛ برای اطلاع از خدمات قابل ارائه و هماهنگی زمان با سالن تماس بگیرید.'},
  skin: {heading:'مراقبت و زیبایی پوست در صادقیه تهران', description:'خدمات مراقبت و زیبایی پوست در سالن کیمیا در صادقیه، غرب تهران؛ جزئیات خدمات و زمان مراجعه را با مجموعه هماهنگ کنید.'},
  atelier: {heading:'آتلیه عکاسی پرتره در صادقیه و غرب تهران', description:'آتلیه عکاسی کیمیا در صادقیه، غرب تهران؛ برای بررسی سبک عکاسی پرتره، جزئیات جلسه و هماهنگی زمان با مجموعه تماس بگیرید.'},
@@ -117,8 +117,8 @@ function businessSchema(settings,base=BASE_URL,hours=[]) {
  const openingHoursSpecification=hours.filter(h=>!h.is_closed&&days[h.iso_weekday]&&h.opens_at&&h.closes_at).map(h=>({'@type':'OpeningHoursSpecification',dayOfWeek:'https://schema.org/'+days[h.iso_weekday],opens:h.opens_at.slice(0,5),closes:h.closes_at.slice(0,5)}));
  return {'@type':'BeautySalon','@id':base+'/#salon',name:settings.name,url:base+'/',telephone:settings.phone,address:{'@type':'PostalAddress',streetAddress:settings.address,addressLocality:'تهران',addressRegion:'تهران',addressCountry:'IR'},areaServed:['صادقیه','غرب تهران'],hasMap:SALON_LOCATION.google,geo:{'@type':'GeoCoordinates',latitude:SALON_LOCATION.latitude,longitude:SALON_LOCATION.longitude},sameAs:[SALON_LOCATION.google,settings.instagram_beauty||'https://instagram.com/kb.kimiabeauty',settings.instagram_studio||'https://instagram.com/kb.kimia.studio'],...(openingHoursSpecification.length?{openingHoursSpecification}:{})};
 }
-function serviceSearchBody(slug) {
+function serviceSearchBody(slug,catalog=[],settings={}) {
  const guide=slug==='nails'?{sections:NAIL_SEARCH_SECTIONS,faqs:NAIL_SEARCH_FAQS,faqTitle:'پرسش‌های متداول خدمات ناخن'}:SERVICE_SEARCH_GUIDES[slug];
  if(!guide)return '';
- return guide.sections.map(([title,body])=>`<section><h2>${escapeHtml(title)}</h2><p>${escapeHtml(body)}</p></section>`).join('')+`<section aria-labelledby="${escapeHtml(slug)}-faq"><h2 id="${escapeHtml(slug)}-faq">${escapeHtml(guide.faqTitle)}</h2>`+guide.faqs.map(([q,a])=>`<details><summary>${escapeHtml(q)}</summary><p>${escapeHtml(a)}</p></details>`).join('')+'</section>';
+ return guide.sections.map(([title,body],i)=>`<section id="${escapeHtml(slug)}-section-${i+1}"><h2>${escapeHtml(title)}</h2><p>${escapeHtml(body)}</p></section>`).join('')+serviceDecisionBody(slug,catalog,settings)+`<section aria-labelledby="${escapeHtml(slug)}-faq"><h2 id="${escapeHtml(slug)}-faq">${escapeHtml(guide.faqTitle)}</h2>`+guide.faqs.map(([q,a])=>`<details><summary>${escapeHtml(q)}</summary><p>${escapeHtml(a)}</p></details>`).join('')+'</section>';
 }

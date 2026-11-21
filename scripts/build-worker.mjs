@@ -22,7 +22,7 @@ const [html, hero, portrait, session, template, manifest, admin, platform, fontV
   readFile(path.join(root, 'src/assets/fonts/IranNastaliq.woff2')),
 ]);
 const heroPath = '/media/hero-' + createHash('sha256').update(hero).digest('hex').slice(0, 12) + '.webp';
-const seo = await readFile(path.join(root, 'worker/seo.js'), 'utf8') + '\n' + await readFile(path.join(root, 'worker/navigation.js'), 'utf8');
+const seo = await readFile(path.join(root, 'worker/seo.js'), 'utf8') + '\n' + await readFile(path.join(root, 'worker/service-guides.js'), 'utf8') + '\n' + await readFile(path.join(root, 'worker/navigation.js'), 'utf8');
 const worker = template
   .replace('__PAGE_HTML__', () => JSON.stringify(html.replaceAll('/media/atelier.webp', heroPath)))
   .replace('__ADMIN_HTML__', () => JSON.stringify(admin))

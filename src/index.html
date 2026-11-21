@@ -622,12 +622,6 @@ h1,h2,h3,p{margin-top:0}
   margin-bottom:36px;
   gap:30px;
 }
-.portfolio-note{
-  font-size:13.5px;
-  color:var(--text-light-muted);
-  max-width:460px;
-  line-height:1.9;
-}
 .portfolio-grid{
   display:grid;
   grid-template-columns:1.25fr 0.85fr 0.85fr;
@@ -656,19 +650,6 @@ h1,h2,h3,p{margin-top:0}
   position:absolute;
   inset:30% 0 0;
   background:linear-gradient(transparent, rgba(7,15,12,0.92) 80%);
-}
-.concept-label{
-  position:absolute;
-  top:16px;
-  right:16px;
-  z-index:2;
-  background:rgba(7,15,12,0.85);
-  backdrop-filter:blur(6px);
-  color:var(--gold);
-  border:1px solid rgba(216,182,117,0.4);
-  font-size:11.5px;
-  padding:4px 10px;
-  border-radius:8px;
 }
 .portfolio-card span{
   position:absolute;
@@ -1288,50 +1269,6 @@ h1,h2,h3,p{margin-top:0}
   line-height:1.8;
   color:#ded4c3;
 }
-.notice-badge{
-  display:inline-block;
-  background:#caa972;
-  color:#12100c;
-  font-size:11px;
-  font-weight:600;
-  padding:2px 8px;
-  border-radius:6px;
-  margin-left:8px;
-}
-.dev-preview-bar{
-  background:rgba(0,0,0,0.35);
-  border:1px dashed rgba(216,182,117,0.35);
-  padding:10px 12px;
-  margin-bottom:20px;
-  font-size:12px;
-  border-radius:12px;
-}
-.dev-preview-label{
-  display:block;
-  color:var(--gold);
-  font-weight:500;
-  margin-bottom:6px;
-}
-.dev-preview-chips{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
-.dev-chip{
-  background:#14231a;
-  border:1px solid rgba(216,182,117,0.3);
-  color:#d4cbba;
-  font-size:11.5px;
-  padding:4px 10px;
-  cursor:pointer;
-  border-radius:14px;
-}
-.dev-chip.active{
-  background:var(--gold);
-  color:#12100c;
-  font-weight:600;
-  border-color:var(--gold);
-}
 .account-title{
   font-size:21px;
   font-weight:600;
@@ -1713,7 +1650,7 @@ __SEO_HEAD__</head>
   <section class="atelier" id="atelier">
     <div class="atelier-layout">
       <div class="atelier-image">
-        <img src="/media/session.webp" alt="تصویر مفهومی از یک جلسهٔ عکاسی؛ عکس واقعی سالن نیست" loading="lazy">
+        <img src="/media/session.webp" alt="جلسهٔ عکاسی در آتلیه" loading="lazy">
         <span class="atelier-stamp">KIMIA PORTRAIT ATELIER</span>
       </div>
       <div class="atelier-copy">
@@ -1739,27 +1676,23 @@ __SEO_HEAD__</head>
           <span class="section-label">THE ATELIER MOOD</span>
           <h2 class="section-title">زیبایی در قاب کیمیا</h2>
         </div>
-        <p class="portfolio-note">تصاویر این پیش‌نمایش برای نمایش حال‌وهوای طراحی ساخته شده‌اند؛ عکس‌های واقعی کیمیا را بعداً جایگزین می‌کنیم.</p>
       </div>
       <div class="real-gallery">__REAL_GALLERY__</div>
       <div class="portfolio-grid">
         <div class="portfolio-card">
-          <small class="concept-label">تصویر مفهومی</small>
           <img src="/media/portrait.webp" alt="پرترهٔ زیبایی در فضای آتلیه" loading="lazy">
           <span>آماده‌سازی پرتره</span>
-          <button class="gallery-open" type="button" aria-label="نمایش بزرگتر تصویر مفهومی"></button>
+          <button class="gallery-open" type="button" aria-label="نمایش بزرگتر تصویر"></button>
         </div>
         <div class="portfolio-card">
-          <small class="concept-label">تصویر مفهومی</small>
           <img src="/media/session.webp" alt="جلسهٔ عکاسی پرتره در آتلیه" loading="lazy">
           <span>نور و قاب</span>
-          <button class="gallery-open" type="button" aria-label="نمایش بزرگتر تصویر مفهومی"></button>
+          <button class="gallery-open" type="button" aria-label="نمایش بزرگتر تصویر"></button>
         </div>
         <div class="portfolio-card">
-          <small class="concept-label">تصویر مفهومی</small>
           <img src="/media/atelier.webp" alt="فضای آتلیه و عکاسی" loading="lazy">
           <span>درخشش تو</span>
-          <button class="gallery-open" type="button" aria-label="نمایش بزرگتر تصویر مفهومی"></button>
+          <button class="gallery-open" type="button" aria-label="نمایش بزرگتر تصویر"></button>
         </div>
       </div>
     </div>
@@ -1914,10 +1847,6 @@ __SEO_HEAD__</head>
           <p>برای دریافت جزئیات متناسب با خدمت و سبک دلخواهت، با شمارهٔ ۰۹۳۰ ۷۸۹ ۷۸۲۵ تماس بگیر.</p>
         </details>
         <details>
-          <summary>تصاویر سایت نمونه‌کار واقعی کیمیا هستند؟</summary>
-          <p>تصاویر فعلی مفهومی و برای نمایش طراحی سایت‌اند. نمونه‌کارهای مجموعه را در صفحات اینستاگرام سالن و آتلیه ببین؛ گالری سایت با عکس‌های واقعی تکمیل خواهد شد.</p>
-        </details>
-        <details>
           <summary>برای تغییر یا لغو زمان هماهنگ‌شده چه کنم؟</summary>
           <p>با سالن تماس بگیر و نام و زمان نوبتت را اعلام کن تا تغییر برنامه با مجموعه هماهنگ شود.</p>
         </details>
@@ -2013,11 +1942,10 @@ __SEO_HEAD__</head>
   <a class="button" href="tel:+989307897825">تماس برای هماهنگی ←</a>
 </div>
 
-<!-- Accessible Concept Image Dialog -->
-<dialog class="gallery-dialog" id="galleryDialog" aria-label="تصویر مفهومی طراحی">
+<!-- Accessible Image Dialog -->
+<dialog class="gallery-dialog" id="galleryDialog" aria-label="نمایش تصویر">
   <button type="button" id="closeGallery">بستن ×</button>
   <img alt="">
-  <p>تصویر مفهومی طراحی؛ نمونه‌کار واقعی سالن نیست.</p>
 </dialog>
 
 <!-- Accessible Customer Registration & Login Dialog -->
@@ -2034,20 +1962,9 @@ __SEO_HEAD__</head>
       <button type="button" class="account-close-btn" id="closeAccount" aria-label="بستن پنجره">×</button>
     </div>
 
-    <!-- Offline Preview Banner -->
+    <!-- Account availability notice -->
     <div class="account-offline-notice" role="status">
-      <span class="notice-badge">پیش‌نمایش آنلاین</span>
       <span>ورود و ثبت‌نام آنلاین به‌زودی فعال می‌شود؛ برای هماهنگی نوبت یا پیگیری، با سالن تماس بگیر.</span>
-    </div>
-
-    <!-- Development Visual Preview Stage Switcher (Explicitly Labeled) -->
-    <div class="dev-preview-bar" aria-label="بررسی طراحی گام‌ها">
-      <span class="dev-preview-label">پیش‌نمایش بصری گام‌های ورود و عضویت:</span>
-      <div class="dev-preview-chips">
-        <button type="button" class="dev-chip active" data-preview-stage="phone">۱. شماره موبایل</button>
-        <button type="button" class="dev-chip" data-preview-stage="otp">۲. کد تأیید</button>
-        <button type="button" class="dev-chip" data-preview-stage="register">۳. تکمیل مشخصات</button>
-      </div>
     </div>
 
     <!-- STAGE 1: Phone Number -->
@@ -2285,7 +2202,7 @@ const dialog=document.getElementById('galleryDialog');
 document.querySelectorAll('.gallery-open').forEach(button=>button.addEventListener('click',()=>{
   const source=button.parentElement.querySelector('img'),target=dialog.querySelector('img');
   target.src=source.src;
-  target.alt='تصویر مفهومی: '+source.alt;
+  target.alt=source.alt;
   dialog.showModal();
 }));
 document.getElementById('closeGallery').addEventListener('click',()=>dialog.close());
@@ -2358,9 +2275,6 @@ function setAccountStage(stageName) {
   accountDialog.querySelectorAll('.account-stage').forEach(el => {
     el.hidden = el.dataset.stage !== stageName;
   });
-  accountDialog.querySelectorAll('.dev-chip').forEach(chip => {
-    chip.classList.toggle('active', chip.dataset.previewStage === stageName);
-  });
   const firstInput = accountDialog.querySelector(`.account-stage[data-stage="${stageName}"] input:not([type=hidden])`);
   if (firstInput) firstInput.focus();
 }
@@ -2397,18 +2311,6 @@ accountDialog.addEventListener('click', e => {
       closeAccountModal();
     }
   }
-});
-
-/* Dev preview switcher for visual review of steps */
-accountDialog.querySelectorAll('.dev-chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    const target = chip.dataset.previewStage;
-    if (target === 'otp' && !currentPhone) {
-      currentPhone = '09307897825';
-      document.getElementById('destPhoneDisplay').textContent = currentPhone;
-    }
-    setAccountStage(target);
-  });
 });
 
 /* Stage 1: Phone submit */

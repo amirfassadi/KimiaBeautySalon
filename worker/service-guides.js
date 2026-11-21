@@ -1,6 +1,24 @@
 // Practical decision guides, shared by the public homepage and service pages.
 // Options explain what to discuss; they do not promise unconfirmed techniques or prices.
 const SERVICE_DECISION_GUIDES = {
+ atelier: {
+  label:'عکاسی پرتره',
+  intro:'برای انتخاب آتلیه عکاسی در صادقیه و غرب تهران، سبک پرتره، شرایط جلسه و جزئیات تحویل عکس را بررسی کنید. کیمیا در پیامبر شرقی امکان هماهنگی خدمات زیبایی و عکاسی در یک مجموعه را فراهم می‌کند.',
+  comparisonTitle:'پیش از جلسه عکاسی چه چیزهایی را مشخص کنیم؟',
+  columns:['موضوع هماهنگی','پرسش از آتلیه'],
+  rows:[
+   ['کاربرد و سبک پرتره','عکس را برای پروفایل، استفاده شخصی یا مناسبت می‌خواهید؟ نمونه دلخواهتان را نشان دهید و امکان اجرای آن را بپرسید.'],
+   ['مدت جلسه و آماده‌شدن','زمان حضور، مدت عکاسی، تعداد لباس‌ها و زمان لازم برای میکاپ احتمالی را مشخص کنید.'],
+   ['انتخاب و ویرایش عکس','تعداد عکس‌های نهایی، نحوه انتخاب، میزان ویرایش و هزینه عکس اضافه را بپرسید.'],
+   ['فایل، چاپ و زمان تحویل','روش دریافت فایل، اندازه عکس‌ها، امکان چاپ و تاریخ تحویل را پیش از جلسه هماهنگ کنید.'],
+  ],
+  checklistTitle:'آمادگی برای جلسه عکاسی پرتره',
+  checklist:['یک یا چند عکس مرجع و توضیح کاربرد عکس و حال‌وهوای دلخواه.','لباس و اکسسوری انتخابی؛ تعداد و امکان تعویض را پیشاپیش هماهنگ کنید.','اعلام نیاز به میکاپ و ساعت پایان کار برای بررسی برنامه مشترک سالن و آتلیه.','توافق درباره تعداد عکس، ویرایش، مبلغ، زمان تحویل و رضایت برای انتشار.'],
+  sampleTitle:'بررسی نمونه‌کار عکاسی پیش از هماهنگی',
+  sampleNote:'نمونه پرتره نزدیک به سبک دلخواهتان بخواهید و درباره نور، کادر و ویرایش آن صحبت کنید. تصاویر مفهومی صفحه اصلی برای نمایش حال‌وهوای طراحی‌اند؛ عکس واقعی مشتریان یا فضای آتلیه محسوب نمی‌شوند.',
+  instagramSetting:'instagram_studio',instagramFallback:'https://instagram.com/kb.kimia.studio',instagramLabel:'صفحه اینستاگرام آتلیه کیمیا',
+  related:[['makeup','میکاپ و گریم پیش از عکاسی','راهنمای میکاپ را ببینید و اگر هر دو خدمت را می‌خواهید، زمان آماده‌شدن و شروع عکاسی را با مجموعه هماهنگ کنید.']],
+ },
  haircut: {
   label:'کوتاهی مو',
   intro:'برای انتخاب مدل کوتاهی، قد نهایی مو و حالت آن بدون براشینگ را مشخص کنید. راهنمای مدل‌ها، هزینه و هماهنگی مراجعه به کیمیا در پیامبر شرقی را در این صفحه ببینید.',
@@ -65,11 +83,11 @@ function serviceDecisionBody(slug,catalog,settings) {
  const guide=SERVICE_DECISION_GUIDES[slug];
  if(!guide)return '';
  const rows=guide.rows.map(([name,body])=>`<tr><th scope="row">${escapeHtml(name)}</th><td>${escapeHtml(body)}</td></tr>`).join('');
- const instagram=settings.instagram_beauty||'https://instagram.com/kb.kimiabeauty';
+ const instagram=settings[guide.instagramSetting||'instagram_beauty']||guide.instagramFallback||'https://instagram.com/kb.kimiabeauty';
  const links=guide.related.filter(([target])=>catalog.some(s=>s.slug===target));
  return `<section id="${slug}-options"><h2>${escapeHtml(guide.comparisonTitle)}</h2><p>این مقایسه برای انتخاب درخواست شماست؛ امکان ارائه و جزئیات اجرا را پیش از مراجعه با سالن تأیید کنید.</p><div class="service-options"><table><caption>${escapeHtml(guide.comparisonTitle)}</caption><thead><tr>${guide.columns.map(label=>`<th scope="col">${escapeHtml(label)}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div></section>`+
  `<section id="${slug}-checklist"><h2>${escapeHtml(guide.checklistTitle)}</h2><ul>${guide.checklist.map(item=>`<li>${escapeHtml(item)}</li>`).join('')}</ul></section>`+
- `<section><h2>انتخاب مدل از روی نمونه‌کار</h2><p>${escapeHtml(guide.sampleNote)}</p><a href="${escapeHtml(instagram)}" target="_blank" rel="noopener noreferrer">صفحه اینستاگرام سالن کیمیا</a></section>`+
+ `<section><h2>${escapeHtml(guide.sampleTitle||'انتخاب مدل از روی نمونه‌کار')}</h2><p>${escapeHtml(guide.sampleNote)}</p><a href="${escapeHtml(instagram)}" target="_blank" rel="noopener noreferrer">${escapeHtml(guide.instagramLabel||'صفحه اینستاگرام سالن کیمیا')}</a></section>`+
  links.map(([target,label,body])=>`<section><h2><a href="/services/${target}">${escapeHtml(label)}</a></h2><p>${escapeHtml(body)}</p></section>`).join('')+
  `<div class="panel"><h2>هماهنگی ${escapeHtml(guide.label)} با کیمیا</h2><p>برای دریافت قیمت به‌روز و هماهنگی زمان، اطلاعات بالا را هنگام تماس اعلام کنید. نوبت پس از تأیید سالن مشخص می‌شود.</p><a class="cta" href="tel:${escapeHtml(settings.phone)}">تماس برای ${escapeHtml(guide.label)}</a></div>`;
 }

@@ -9,6 +9,7 @@ let services=[
  {id:'hair-id',slug:'hair',name_fa:'خدمات مو',description_fa:''},
  {id:'eyes-id',slug:'eyes',name_fa:'ابرو و مژه',description_fa:null},
  {id:'makeup-id',slug:'makeup',name_fa:'میکاپ و گریم',description_fa:null},
+ {id:'atelier-id',slug:'atelier',name_fa:'آتلیهٔ عکاسی',description_fa:null},
 ];
 let gallery=[];
 const env={SELF_HOSTED:true,SELF_HOSTED_BASE_URL:base,DB_ADAPTER:async path=>{
@@ -116,6 +117,7 @@ const landingPages=[
  ['hair-color','رنگ مو','پرسش‌های متداول رنگ مو','hair'],
  ['eyelash-extensions','کاشت مژه و اکستنشن مژه','پرسش‌های متداول کاشت مژه','eyes'],
  ['makeup','میکاپ و گریم','پرسش‌های متداول میکاپ و گریم',null],
+ ['atelier','عکاسی پرتره','پرسش‌های متداول آتلیه عکاسی',null],
 ];
 const titles=new Set(),descriptions=new Set();
 for(const [slug,keyword,faq,parent] of landingPages) {
@@ -144,7 +146,7 @@ assert.equal(titles.size,landingPages.length);
 assert.equal(descriptions.size,landingPages.length);
 // The decision guides must remain usable without client JS: each shortcut
 // resolves, tables have accessible headers and every service link is available.
-for(const slug of ['haircut','hair-color','nails']) {
+for(const slug of ['haircut','hair-color','nails','atelier']) {
  const page=await (await call('/services/'+slug)).text();
  const shortcuts=page.match(/<nav class="service-guide-nav"[\s\S]*?<\/nav>/)?.[0];
  assert.ok(shortcuts,'Decision guide shortcuts missing for '+slug);
@@ -154,7 +156,7 @@ for(const slug of ['haircut','hair-color','nails']) {
  assert.match(page,/<caption>[^<]+<\/caption>/);
  assert.match(page,/<th scope="col">/);
  assert.match(page,/<th scope="row">/);
- assert.ok(page.includes('href="https://instagram.com/kb.kimiabeauty"'));
+ assert.ok(page.includes('href="https://instagram.com/'+(slug==='atelier'?'kb.kimia.studio':'kb.kimiabeauty')+'"'));
  for(const [,path] of page.matchAll(/href="(\/services\/[a-z-]+)"/g)) {
   assert.equal((await call(path)).status,200,'Broken guide destination '+path);
  }
@@ -163,6 +165,18 @@ for(const slug of ['haircut','hair-color','nails']) {
 assert.doesNotMatch(home,/<option value="(?:haircut|hair-color|eyelash-extensions)"/,'Informational pages must not become booking IDs.');
 
 // General hair photos cannot be presented as a specific haircut or color job.
+settings.instagram_studio='https://instagram.com/custom.kimia.studio';
+html=await (await call('/services/atelier')).text();
+assert.ok(html.includes('href="'+settings.instagram_studio+'"'),'Studio samples must use the managed studio profile.');
+assert.doesNotMatch(html,/<img[^>]+src="\/media\//,'Concept images must not become studio portfolio photos.');
+services.find(s=>s.slug==='makeup').is_active=false;
+assert.doesNotMatch(await (await call('/services/atelier')).text(),/href="\/services\/makeup"/);
+services.find(s=>s.slug==='makeup').is_active=true;
+services.find(s=>s.slug==='atelier').is_active=false;
+assert.equal((await call('/services/atelier')).status,404);
+assert.doesNotMatch(await (await call('/')).text(),/href="\/services\/atelier"/);
+assert.doesNotMatch(await (await call('/sitemap.xml')).text(),/services\/atelier/);
+services.find(s=>s.slug==='atelier').is_active=true;
 gallery=[{service_id:'hair-id',image_url:'/uploads/hair.webp',alt_text_fa:'نمونه عمومی مو'}, {image_url:'/uploads/unassigned.webp',alt_text_fa:'تصویر بدون خدمت'}];
 html=await (await call('/services/haircut')).text();
 assert.doesNotMatch(html,/uploads\/hair\.webp|uploads\/unassigned\.webp/);

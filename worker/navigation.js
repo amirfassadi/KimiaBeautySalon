@@ -33,5 +33,5 @@ function localServiceDiscovery(catalog) {
  return '<p class="local-search-copy">برای انتخاب آرایشگاه زنانه در صادقیه و غرب تهران، خدمات سالن زیبایی کیمیا را ببینید. سالن در اشرفی اصفهانی، خیابان پیامبر شرقی قرار دارد؛ برای دسترسی از سمت آیت‌الله کاشانی، از مسیریاب دلخواهتان استفاده کنید.</p><ul class="local-service-links">'+catalog.filter(s=>['haircut','hair-color','nails','eyelash-extensions','makeup'].includes(s.slug)).map(s=>{
   const guide=SERVICE_DECISION_GUIDES[s.slug];
   return `<li><a href="/services/${encodeURIComponent(s.slug)}">${escapeHtml(guide?.label||s.name_fa)} در صادقیه</a>${guide?`<p>${escapeHtml(guide.intro)}</p>`:''}</li>`;
- }).join('')+'</ul>';
+ }).join('')+'</ul>'+ (catalog.some(s=>s.slug==='atelier')?'<p>برای انتخاب سبک پرتره، بررسی هزینه و هماهنگی خدمات زیبایی و عکاسی، <a href="/services/atelier">راهنمای آتلیه عکاسی در صادقیه و غرب تهران</a> را ببینید.</p>':'');
 }

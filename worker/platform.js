@@ -33,7 +33,11 @@ async function renderHome(env){let data;try{data=await publicData(env)}catch{if(
  if(settings.google_site_verification)page=page.replace('</head>','<meta name="google-site-verification" content="'+escapeHtml(settings.google_site_verification)+'"></head>');
  page=page.replace('__TEAM__',(team||[]).length?'<section class="section"><div class="shell"><h2 class="section-title">همراهان تو در کیمیا</h2><div class="journey">'+team.map(t=>'<article><h3>'+escapeHtml(t.display_name)+'</h3><p>'+escapeHtml(t.role_title)+'</p><p>'+escapeHtml(t.bio)+'</p></article>').join('')+'</div></div></section>':'');
  const dayNames={1:'دوشنبه',2:'سه‌شنبه',3:'چهارشنبه',4:'پنج‌شنبه',5:'جمعه',6:'شنبه',7:'یکشنبه'};
- if(hours?.length)page=page.replaceAll('شنبه تا پنج‌شنبه، ۹ صبح تا ۶ عصر',hours.map(h=>dayNames[h.iso_weekday]+': '+(h.is_closed?'تعطیل':h.opens_at.slice(0,5)+' تا '+h.closes_at.slice(0,5))).join(' · '));
+ if(hours?.length){
+  const everyDay=Array.from({length:7},(_,i)=>hours.find(h=>h.iso_weekday===i+1)).every(h=>h&&!h.is_closed&&h.opens_at?.slice(0,5)==='10:00'&&h.closes_at?.slice(0,5)==='19:00');
+  const label=everyDay?'همه‌روزه، از ساعت ۱۰ تا ۱۹':hours.map(h=>dayNames[h.iso_weekday]+': '+(h.is_closed?'تعطیل':h.opens_at.slice(0,5)+' تا '+h.closes_at.slice(0,5))).join(' · ');
+  page=page.replace(/(<span data-business-hours>)[\s\S]*?(<\/span>)/g,(_,open,close)=>open+escapeHtml(label)+close);
+ }
  page=page.replace('__REAL_GALLERY__',gallery.map(g=>`<figure><img src="${escapeHtml(g.image_url)}" alt="${escapeHtml(g.alt_text_fa)}" loading="lazy"><figcaption>${escapeHtml(g.caption_fa)}</figcaption></figure>`).join(''));
  page=page.replace(/<!-- SERVICES_START -->[\s\S]*?<!-- SERVICES_END -->/,'<!-- SERVICES_START -->'+services.map((s,i)=>`<article class="service"><div class="service-top">${String(i+1).padStart(2,'0')} / KIMIA</div><h3>${escapeHtml(s.name_fa)}</h3><p>${escapeHtml(serviceSearchContent(s,settings).summary)}</p>${serviceSearchLinks(s.slug,searchServices)}<div class="service-footer"><a class="service-detail-link" href="/services/${encodeURIComponent(s.slug)}">${escapeHtml(serviceSearchContent(s,settings).heading)}</a><a class="service-choice" href="tel:${escapeHtml(settings.phone)}">تماس برای هماهنگی ←</a></div></article>`).join('')+'<!-- SERVICES_END -->');
  page=page.replace(/(<select name="service" required>)[\s\S]*?<\/select>/,`$1<option value="">انتخاب کن</option>${services.map(s=>`<option value="${escapeHtml(s.slug)}">${escapeHtml(s.name_fa)}</option>`).join('')}</select>`);

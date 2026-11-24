@@ -9,6 +9,7 @@ import worker from '../dist/server/index.js';
 import {adminAuthRoutes} from './admin-auth.js';
 import {createPostgresAdapter} from './postgres-adapter.js';
 import {postgresConfig} from './postgres-config.js';
+import {applyBusinessHours} from './business-hours.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LOGIN_HTML = await readFile(new URL('../src/admin-login.html', import.meta.url), 'utf8');
@@ -272,6 +273,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     if (!role.rows[0] || role.rows[0].rolsuper || role.rows[0].role_name === 'postgres') {
       throw new Error('The application database role must be dedicated and non-superuser.');
     }
+    await applyBusinessHours(pool);
     const handler = await createStandaloneHandler({pool, env: process.env, uploadDir: process.env.UPLOAD_DIR});
     const server = createServer(handler);
     server.requestTimeout = 15000;

@@ -1804,7 +1804,6 @@ __SEO_HEAD__</head>
               ساعت پیشنهادی
               <select name="time">
                 <option value="">با سالن هماهنگ می‌کنم</option>
-                <option>09:00</option>
                 <option>10:00</option>
                 <option>11:00</option>
                 <option>12:00</option>
@@ -1813,9 +1812,10 @@ __SEO_HEAD__</head>
                 <option>15:00</option>
                 <option>16:00</option>
                 <option>17:00</option>
+                <option>18:00</option>
               </select>
             </label>
-            <p class="booking-info">شنبه تا پنج‌شنبه، ۹ صبح تا ۶ عصر. روز و ساعت انتخابی برای هماهنگی است؛ نوبت پس از تأیید سالن قطعی می‌شود.</p>
+            <p class="booking-info"><span data-business-hours>همه‌روزه، از ساعت ۱۰ تا ۱۹</span>. لطفاً برای جلوگیری از معطلی، پیش از مراجعه حتماً با سالن هماهنگ کنید. برای مراجعه پیش از ساعت ۱۰ یا پس از ساعت ۱۹ نیز با سالن تماس بگیرید تا امکان پذیرش بررسی شود. زمان پیشنهادی پس از تأیید سالن قطعی می‌شود.</p>
           </fieldset>
 
           <fieldset class="booking-step" hidden>
@@ -1925,7 +1925,9 @@ __SEO_HEAD__</head>
           </div>
           <div class="contact-item">
             <small>ساعت کاری سالن</small>
-            <span>شنبه تا پنج‌شنبه، ۹ صبح تا ۶ عصر</span>
+            <span data-business-hours>همه‌روزه، از ساعت ۱۰ تا ۱۹</span>
+            <span>لطفاً برای جلوگیری از معطلی، پیش از مراجعه حتماً با سالن هماهنگ کنید.</span>
+            <span>برای مراجعه پیش از ساعت ۱۰ یا پس از ساعت ۱۹ نیز با سالن تماس بگیرید تا امکان پذیرش بررسی شود.</span>
           </div>
           <div class="contact-item">
             <small>تماس مستقیم</small>
@@ -2175,8 +2177,8 @@ function validateStep(){
   }
   if(step===0&&form.elements.date.value){
     const d=form.elements.date.value;
-    if(d<today||new Date(d+'T12:00:00+03:30').getUTCDay()===5){
-      statusBox.textContent='روز پیشنهادی را از شنبه تا پنج‌شنبه و از امروز به بعد انتخاب کن.';
+    if(d<today){
+      statusBox.textContent='روز پیشنهادی را از امروز به بعد انتخاب کن.';
       form.elements.date.focus();
       return false;
     }

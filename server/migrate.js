@@ -10,6 +10,8 @@ const MIGRATIONS = [
   '002_admin_booking.sql',
   '003_booking_tracking.sql',
   '005_self_hosted_admin.sql',
+  '006_customer_auth_v1.sql',
+  '007_customer_referrals.sql',
 ];
 const TRACKING_TABLE = 'public.kimia_schema_migrations';
 const ADVISORY_LOCK_NAME = 'kimia:self-hosted:migrations:v1';
@@ -23,6 +25,24 @@ const APPLICATION_TABLES = [
 const APPLICATION_FUNCTIONS = [
   'create_booking_request', 'create_booking_v2', 'manage_booking', 'lookup_booking',
   'create_customer_otp', 'revoke_customer_otp', 'verify_customer_otp', 'register_customer',
+];
+const CUSTOMER_TABLES = [
+  'kimia_customer_accounts',
+  'kimia_customer_otp_challenges',
+  'kimia_customer_registration_proofs',
+  'kimia_customer_access_sessions',
+  'kimia_customer_send_events',
+];
+const LEGACY_CUSTOMER_FUNCTIONS = [
+  'create_customer_otp',
+  'revoke_customer_otp',
+  'verify_customer_otp',
+  'register_customer',
+];
+const REFERRAL_TABLES = [
+  'kimia_referral_people',
+  'kimia_customer_referrals',
+  'kimia_customer_referral_history',
 ];
 
 async function exists(client, sql, values) {
@@ -131,6 +151,231 @@ function validateAppliedMigrations(applied) {
   }
 }
 
+async function customerObjectInventory(client) {
+  return exists(client, `select exists (
+    select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
+     where n.nspname='public' and c.relname = any($1::text[])
+  ) as present`, [[...CUSTOMER_TABLES, ...REFERRAL_TABLES]]);
+}
+
+async function referralObjectInventory(client) {
+  return exists(client, `select exists (
+    select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
+     where n.nspname='public' and c.relname = any($1::text[])
+  ) as present`, [REFERRAL_TABLES]);
+}
+
+async function validateReferralSchema(client) {
+  const completeTables = await exists(client, `select count(*)=3 as present
+    from pg_tables
+   where schemaname='public'
+     and tablename = any($1::text[])
+     and tableowner=current_user`, [REFERRAL_TABLES]);
+  if (!completeTables) {
+    throw new Error('Customer-referral schema is missing, partial or owned by the wrong role. Review migration 007 before proceeding.');
+  }
+  const rls = await exists(client, `select count(*)=3 as present
+    from pg_class c join pg_namespace n on n.oid=c.relnamespace
+   where n.nspname='public' and c.relname=any($1::text[]) and c.relrowsecurity`, [REFERRAL_TABLES]);
+  if (!rls) {
+    throw new Error('Customer-referral schema is missing required row-level security settings. Review migration 007 before proceeding.');
+  }
+  const columns = await exists(client, `select
+    (select count(*)=5 from information_schema.columns
+      where table_schema='public' and table_name='kimia_referral_people'
+        and ((column_name='id' and data_type='uuid' and is_nullable='NO')
+          or (column_name='display_name' and data_type='text' and is_nullable='NO')
+          or (column_name='person_kind' and data_type='text' and is_nullable='NO')
+          or (column_name='created_by_admin_id' and data_type='uuid' and is_nullable='NO')
+          or (column_name='created_at' and data_type='timestamp with time zone' and is_nullable='NO')))
+    and (select count(*)=21 from information_schema.columns
+      where table_schema='public' and table_name='kimia_customer_referrals'
+        and ((column_name='customer_account_id' and data_type='uuid' and is_nullable='NO')
+          or (column_name='site_discovery_channel' and data_type='text' and is_nullable='NO')
+          or (column_name='site_declaration_status' and data_type='text' and is_nullable='NO')
+          or (column_name='site_declaration_kind' and data_type='text' and is_nullable='YES')
+          or (column_name='site_declaration_value' and data_type='text' and is_nullable='YES')
+          or (column_name='salon_declaration_status' and data_type='text' and is_nullable='NO')
+          or (column_name='salon_declaration_kind' and data_type='text' and is_nullable='YES')
+          or (column_name='salon_declaration_value' and data_type='text' and is_nullable='YES')
+          or (column_name='same_referrer_declared' and data_type='boolean' and is_nullable='NO')
+          or (column_name='declaration_recorded_at' and data_type='timestamp with time zone' and is_nullable='YES')
+          or (column_name='site_verification_status' and data_type='text' and is_nullable='NO')
+          or (column_name='site_referrer_person_id' and data_type='uuid' and is_nullable='YES')
+          or (column_name='site_introduced_on' and data_type='date' and is_nullable='YES')
+          or (column_name='salon_verification_status' and data_type='text' and is_nullable='NO')
+          or (column_name='salon_referrer_person_id' and data_type='uuid' and is_nullable='YES')
+          or (column_name='salon_introduced_on' and data_type='date' and is_nullable='YES')
+          or (column_name='same_referrer_confirmed' and data_type='boolean' and is_nullable='NO')
+          or (column_name='recorded_by_admin_id' and data_type='uuid' and is_nullable='YES')
+          or (column_name='recorded_at' and data_type='timestamp with time zone' and is_nullable='YES')
+          or (column_name='created_at' and data_type='timestamp with time zone' and is_nullable='NO')
+          or (column_name='updated_at' and data_type='timestamp with time zone' and is_nullable='NO')))
+    and (select count(*)=8 from information_schema.columns
+      where table_schema='public' and table_name='kimia_customer_referral_history'
+        and ((column_name='id' and data_type='uuid' and is_nullable='NO')
+          or (column_name='customer_account_id' and data_type='uuid' and is_nullable='NO')
+          or (column_name='event_type' and data_type='text' and is_nullable='NO')
+          or (column_name='actor_admin_id' and data_type='uuid' and is_nullable='NO')
+          or (column_name='change_reason' and data_type='text' and is_nullable='YES')
+          or (column_name='previous_state' and data_type='jsonb' and is_nullable='YES')
+          or (column_name='new_state' and data_type='jsonb' and is_nullable='NO')
+          or (column_name='created_at' and data_type='timestamp with time zone' and is_nullable='NO'))) as present`);
+  if (!columns) {
+    throw new Error('Customer-referral schema is missing essential columns. Review migration 007 before proceeding.');
+  }
+  const privileges = await exists(client, `select not exists (
+    select 1
+      from pg_class c
+      join pg_namespace n on n.oid=c.relnamespace
+      cross join lateral aclexplode(coalesce(c.relacl, acldefault('r', c.relowner))) acl
+     where n.nspname='public'
+       and c.relname=any($1::text[])
+       and (
+         acl.grantee=0
+         or acl.grantee in (
+           select oid from pg_roles
+            where rolname in ('anon','authenticated','service_role')
+         )
+       )
+  ) as present`, [REFERRAL_TABLES]);
+  if (!privileges) {
+    throw new Error('Customer-referral table privileges were found for a legacy API role. Review migration 007 before proceeding.');
+  }
+}
+
+async function legacyCustomerFunctionInventory(client) {
+  return exists(client, `select exists (
+    select 1
+      from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+     where n.nspname='public' and p.proname=any($1::text[])
+  ) as present`, [LEGACY_CUSTOMER_FUNCTIONS]);
+}
+
+async function validateCustomerSchema(client) {
+  const completeTables = await exists(client, `select count(*)=5 as present
+    from pg_tables
+   where schemaname='public'
+     and tablename = any($1::text[])
+     and tableowner=current_user`, [CUSTOMER_TABLES]);
+  if (!completeTables) {
+    throw new Error('Customer-auth schema is missing, partial or owned by the wrong role. Review migration 006 before proceeding.');
+  }
+
+  const rls = await exists(client, `select count(*)=5 as present
+    from pg_class c join pg_namespace n on n.oid=c.relnamespace
+   where n.nspname='public' and c.relname=any($1::text[]) and c.relrowsecurity`, [CUSTOMER_TABLES]);
+  if (!rls) {
+    throw new Error('Customer-auth schema is missing required row-level security settings. Review migration 006 before proceeding.');
+  }
+
+  const columns = await exists(client, `select
+    (select count(*)=8 from information_schema.columns
+      where table_schema='public' and table_name='kimia_customer_accounts'
+        and ((column_name='id' and data_type='uuid' and is_nullable='NO')
+          or (column_name='phone_e164' and data_type='text' and is_nullable='NO')
+          or (column_name='first_name' and data_type='text' and is_nullable='NO')
+          or (column_name='last_name' and data_type='text' and is_nullable='NO')
+          or (column_name='marketing_consent' and data_type='boolean' and is_nullable='NO')
+          or (column_name='marketing_consent_at' and data_type='timestamp with time zone' and is_nullable='YES')
+          or (column_name='created_at' and data_type='timestamp with time zone' and is_nullable='NO')
+          or (column_name='updated_at' and data_type='timestamp with time zone' and is_nullable='NO')))
+    and (select count(*)=8 from information_schema.columns
+      where table_schema='public' and table_name='kimia_customer_otp_challenges'
+        and ((column_name='id' and data_type='uuid' and is_nullable='NO')
+          or (column_name='phone_e164' and data_type='text' and is_nullable='NO')
+          or (column_name='code_hash' and data_type='character' and character_maximum_length=64 and is_nullable='NO')
+          or (column_name='expires_at' and data_type='timestamp with time zone' and is_nullable='NO')
+          or (column_name='attempts' and data_type='smallint' and is_nullable='NO')
+          or (column_name='consumed_at' and data_type='timestamp with time zone' and is_nullable='YES')
+          or (column_name='revoked_at' and data_type='timestamp with time zone' and is_nullable='YES')
+          or (column_name='created_at' and data_type='timestamp with time zone' and is_nullable='NO')))
+    and (select count(*)=7 from information_schema.columns
+      where table_schema='public' and table_name='kimia_customer_registration_proofs'
+        and ((column_name='id' and data_type='uuid' and is_nullable='NO')
+          or (column_name='phone_e164' and data_type='text' and is_nullable='NO')
+          or (column_name='proof_hash' and data_type='character' and character_maximum_length=64 and is_nullable='NO')
+          or (column_name='expires_at' and data_type='timestamp with time zone' and is_nullable='NO')
+          or (column_name='used_at' and data_type='timestamp with time zone' and is_nullable='YES')
+          or (column_name='revoked_at' and data_type='timestamp with time zone' and is_nullable='YES')
+          or (column_name='created_at' and data_type='timestamp with time zone' and is_nullable='NO')))
+    and (select count(*)=7 from information_schema.columns
+      where table_schema='public' and table_name='kimia_customer_access_sessions'
+        and ((column_name='id' and data_type='uuid' and is_nullable='NO')
+          or (column_name='account_id' and data_type='uuid' and is_nullable='NO')
+          or (column_name='phone_e164' and data_type='text' and is_nullable='NO')
+          or (column_name='token_hash' and data_type='character' and character_maximum_length=64 and is_nullable='NO')
+          or (column_name='expires_at' and data_type='timestamp with time zone' and is_nullable='NO')
+          or (column_name='revoked_at' and data_type='timestamp with time zone' and is_nullable='YES')
+          or (column_name='created_at' and data_type='timestamp with time zone' and is_nullable='NO')))
+    and (select count(*)=5 from information_schema.columns
+      where table_schema='public' and table_name='kimia_customer_send_events'
+        and ((column_name='id' and data_type='uuid' and is_nullable='NO')
+          or (column_name='key_type' and data_type='text' and is_nullable='NO')
+          or (column_name='key_hash' and data_type='character' and character_maximum_length=64 and is_nullable='NO')
+          or (column_name='phone_e164' and data_type='text' and is_nullable='YES')
+          or (column_name='created_at' and data_type='timestamp with time zone' and is_nullable='NO'))) as present`);
+  if (!columns) {
+    throw new Error('Customer-auth schema is missing essential columns. Review migration 006 before proceeding.');
+  }
+
+  const constraints = await exists(client, `select
+    exists (
+      select 1 from pg_constraint c
+      where c.conrelid='public.kimia_customer_accounts'::regclass
+        and c.contype='u'
+        and c.conkey = array[(select attnum from pg_attribute where attrelid=c.conrelid and attname='phone_e164')]::smallint[]
+    )
+    and exists (
+      select 1 from pg_constraint c
+      where c.conrelid='public.kimia_customer_registration_proofs'::regclass
+        and c.contype='u'
+        and c.conkey = array[(select attnum from pg_attribute where attrelid=c.conrelid and attname='proof_hash')]::smallint[]
+    )
+    and exists (
+      select 1 from pg_constraint c
+      where c.conrelid='public.kimia_customer_access_sessions'::regclass
+        and c.contype='u'
+        and c.conkey = array[(select attnum from pg_attribute where attrelid=c.conrelid and attname='token_hash')]::smallint[]
+    )
+    and exists (
+      select 1 from pg_constraint c
+      where c.conrelid='public.kimia_customer_access_sessions'::regclass
+        and c.contype='f'
+        and c.confrelid='public.kimia_customer_accounts'::regclass
+        and c.conkey = array[
+          (select attnum from pg_attribute where attrelid=c.conrelid and attname='account_id'),
+          (select attnum from pg_attribute where attrelid=c.conrelid and attname='phone_e164')
+        ]::smallint[]
+        and c.confkey = array[
+          (select attnum from pg_attribute where attrelid=c.confrelid and attname='id'),
+          (select attnum from pg_attribute where attrelid=c.confrelid and attname='phone_e164')
+        ]::smallint[]
+    ) as present`);
+  if (!constraints) {
+    throw new Error('Customer-auth credential uniqueness or account relationship constraints are missing. Review migration 006 before proceeding.');
+  }
+
+  const privilege = await exists(client, `select not exists (
+    select 1
+      from pg_class c
+      join pg_namespace n on n.oid=c.relnamespace
+      cross join lateral aclexplode(coalesce(c.relacl, acldefault('r', c.relowner))) acl
+     where n.nspname='public'
+       and c.relname=any($1::text[])
+       and (
+         acl.grantee=0
+         or acl.grantee in (
+           select oid from pg_roles
+            where rolname in ('anon','authenticated','service_role')
+         )
+       )
+  ) as present`, [CUSTOMER_TABLES]);
+  if (!privilege) {
+    throw new Error('Customer-auth table privileges were found for a legacy API role. Review migration 006 before proceeding.');
+  }
+}
+
 export async function runMigrations(pool, {adoptExisting = false} = {}) {
   const client = await pool.connect();
   let locked = false;
@@ -146,8 +391,32 @@ export async function runMigrations(pool, {adoptExisting = false} = {}) {
       to_regclass('public.customer_auth_rate_limits') is not null as present`)) {
       throw new Error('Customer-auth schema detected. Migration 004 is out of scope; stop and review the database before proceeding.');
     }
+    if (await legacyCustomerFunctionInventory(client)) {
+      throw new Error('Historical migration 004 customer-auth functions detected. Migration 004 is out of scope; stop and review the database before proceeding.');
+    }
 
     const trackingExists = await exists(client, `select to_regclass('${TRACKING_TABLE}') is not null as present`);
+    const customerObjectsExist = await customerObjectInventory(client);
+    let preflightRecorded = null;
+    if (trackingExists) {
+      await validateMigrationTracking(client);
+      const appliedRows = await client.query(`select version,checksum from ${TRACKING_TABLE}`);
+      preflightRecorded = new Map(appliedRows.rows.map(row => [row.version, row.checksum.trim()]));
+      validateAppliedMigrations(preflightRecorded);
+      if (preflightRecorded.has('006_customer_auth_v1.sql')) {
+        await validateCustomerSchema(client);
+      } else if (customerObjectsExist) {
+        throw new Error('Untracked customer-auth/referral schema detected. Migrations 006–007 must not be adopted or recorded automatically.');
+      }
+      if (preflightRecorded.has('007_customer_referrals.sql')) {
+        await validateReferralSchema(client);
+      } else if (await referralObjectInventory(client)) {
+        throw new Error('Untracked customer-referral schema detected. Migration 007 must not be adopted or recorded automatically.');
+      }
+    } else if (customerObjectsExist) {
+      throw new Error('Untracked customer-auth/referral schema detected. Migrations 006–007 must not be adopted or recorded automatically.');
+    }
+
     const schemaObjectsExist = await applicationObjectsExist(client);
     let markers = [false, false, false];
     if (trackingExists) {

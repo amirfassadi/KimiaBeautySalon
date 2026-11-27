@@ -9,10 +9,10 @@
     "start": "node server/index.js",
     "db:migrate": "node server/migrate.js",
     "admin:create": "node server/bootstrap-admin.js",
-    "test:postgres": "npm run build && node scripts/test-postgres-integration.mjs",
+    "test:postgres": "npm run build && node scripts/test-postgres-integration.mjs && node scripts/test-customer-auth-postgres-concurrency.mjs",
     "preview": "vite --host 0.0.0.0",
     "lint": "tsc --noEmit",
-    "test": "node scripts/validate-artifact.mjs && node scripts/test-postgres-config.mjs && node scripts/test-service-startup.mjs && node scripts/test-worker.mjs && node scripts/test-admin.mjs && node scripts/test-launch-content.mjs && node scripts/test-seo.mjs && node scripts/test-database.mjs && node scripts/test-auth.mjs && node scripts/test-self-hosted.mjs"
+    "test": "node scripts/validate-artifact.mjs && node scripts/test-postgres-config.mjs && node scripts/test-service-startup.mjs && node scripts/test-customer-auth-config.mjs && node scripts/test-customer-auth-schema.mjs && node scripts/test-migration-006-runner.mjs && node scripts/test-customer-auth-validation.mjs && node scripts/test-customer-auth-sms.mjs && node scripts/test-customer-auth-otp-store.mjs && node scripts/test-customer-auth-otp-send.mjs && node scripts/test-customer-auth-otp-verification.mjs && node scripts/test-customer-auth-registration.mjs && node scripts/test-customer-auth-http.mjs && node scripts/test-customer-auth-r1-integration.mjs && node scripts/test-worker.mjs && node scripts/test-admin.mjs && node scripts/test-launch-content.mjs && node scripts/test-seo.mjs && node scripts/test-database.mjs && node scripts/test-auth.mjs && node scripts/test-self-hosted.mjs"
   },
   "dependencies": {
     "pg": "^8.23.1"

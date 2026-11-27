@@ -62,6 +62,7 @@ try {
   assert.deepEqual(firstRun, [
     '001_initial_schema.sql', '002_admin_booking.sql',
     '003_booking_tracking.sql', '005_self_hosted_admin.sql',
+    '006_customer_auth_v1.sql', '007_customer_referrals.sql',
   ]);
   assert.deepEqual(await runMigrations(pool), firstRun, 'Migrations must be safely repeatable.');
   await provisionAdmin(pool, email, password);

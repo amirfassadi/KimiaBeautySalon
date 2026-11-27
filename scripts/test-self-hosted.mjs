@@ -36,10 +36,13 @@ assert.deepEqual(versions.sort(), [
   '002_admin_booking.sql',
   '003_booking_tracking.sql',
   '005_self_hosted_admin.sql',
+  '006_customer_auth_v1.sql',
+  '007_customer_referrals.sql',
 ].sort());
 await runMigrations(pool);
-assert.equal((await db.query('select count(*)::int as count from public.kimia_schema_migrations')).rows[0].count, 4);
+assert.equal((await db.query('select count(*)::int as count from public.kimia_schema_migrations')).rows[0].count, 6);
 assert.equal((await db.query("select to_regclass('public.customer_accounts') is not null as exists")).rows[0].exists, false);
+assert.equal((await db.query("select to_regclass('public.kimia_customer_accounts') is not null as exists")).rows[0].exists, true);
 
 const existingDb = new PGlite({extensions: {pgcrypto}});
 await existingDb.exec('create role anon; create role authenticated; create role service_role;');
@@ -51,7 +54,7 @@ const existingPool = makePool(existingDb);
 await assert.rejects(runMigrations(existingPool), /Untracked or incomplete application schema objects exist/);
 assert.equal((await existingDb.query("select to_regclass('public.kimia_schema_migrations') is not null as exists")).rows[0].exists, false);
 assert.deepEqual(await runMigrations(existingPool, {adoptExisting: true}), [
-  '001_initial_schema.sql', '002_admin_booking.sql', '003_booking_tracking.sql', '005_self_hosted_admin.sql',
+  '001_initial_schema.sql', '002_admin_booking.sql', '003_booking_tracking.sql', '005_self_hosted_admin.sql', '006_customer_auth_v1.sql', '007_customer_referrals.sql',
 ]);
 assert.equal((await existingDb.query('select content->>\'name\' as name from public.site_settings')).rows[0].name, 'دادهٔ قبلی');
 await existingDb.close();

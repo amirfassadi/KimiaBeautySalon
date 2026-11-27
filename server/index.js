@@ -10,9 +10,21 @@ import {adminAuthRoutes} from './admin-auth.js';
 import {createPostgresAdapter} from './postgres-adapter.js';
 import {postgresConfig} from './postgres-config.js';
 import {applyBusinessHours} from './business-hours.js';
+import {createCustomerOtpStore} from './customer-auth-otp-store.js';
+import {createCustomerOtpSendService} from './customer-auth-otp-send.js';
+import {createOtpVerificationService} from './customer-auth-otp-verification.js';
+import {createCustomerRegistrationService} from './customer-auth-registration.js';
+import {createCustomerReferralAdminService} from './customer-referrals.js';
+import {createCustomerAuthHttp, customerAuthErrorResponse} from './customer-auth-http.js';
+import {cookieValue, ACCESS_COOKIE, PROOF_COOKIE, clearCustomerCookies} from './customer-auth-cookies.js';
+import {findCustomerSession} from './customer-auth-session.js';
+import {hashOpaqueCredential, validateOpaqueCredential} from './customer-auth-credentials.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LOGIN_HTML = await readFile(new URL('../src/admin-login.html', import.meta.url), 'utf8');
+const CUSTOMER_LOGIN_HTML = await readFile(new URL('../src/customer-login.html', import.meta.url), 'utf8');
+const CUSTOMER_REGISTER_HTML = await readFile(new URL('../src/customer-register.html', import.meta.url), 'utf8');
+const CUSTOMER_ACCOUNT_HTML = await readFile(new URL('../src/customer-account.html', import.meta.url), 'utf8');
 const IMAGE_KEY = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(?:jpg|png|webp)$/;
 const MIME_TYPES = Object.freeze({jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp'});
 const loopback = address => address === '127.0.0.1' || address === '::1' || address === '::ffff:127.0.0.1';
@@ -42,6 +54,32 @@ function loginPage() {
       'content-security-policy': "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
     },
   });
+}
+
+function customerAuthPage(html) {
+  return new Response(html, {
+    headers: {
+      'content-type': 'text/html; charset=utf-8',
+      'cache-control': 'no-store',
+      'x-robots-tag': 'noindex, nofollow',
+      'x-content-type-options': 'nosniff',
+      'x-frame-options': 'DENY',
+      'referrer-policy': 'strict-origin-when-cross-origin',
+      'content-security-policy': "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
+    },
+  });
+}
+
+function customerRedirect(location, env, clearCookies = false) {
+  const headers = new Headers({
+    location,
+    'cache-control': 'no-store',
+    'x-robots-tag': 'noindex, nofollow',
+  });
+  if (clearCookies) {
+    for (const cookie of clearCustomerCookies(env)) headers.append('set-cookie', cookie);
+  }
+  return new Response(null, {status: 302, headers});
 }
 
 function getOrigin(request, env) {
@@ -125,7 +163,14 @@ function createDiskBucket(root) {
 }
 
 async function sendWebResponse(response, outgoing, method) {
-  outgoing.writeHead(response.status, Object.fromEntries(response.headers.entries()));
+  const headers = Object.fromEntries(
+    [...response.headers.entries()].filter(([name]) => name !== 'set-cookie'),
+  );
+  const setCookies = typeof response.headers.getSetCookie === 'function'
+    ? response.headers.getSetCookie()
+    : null;
+  if (setCookies?.length) outgoing.setHeader('set-cookie', setCookies);
+  outgoing.writeHead(response.status, headers);
   if (method === 'HEAD' || !response.body) {
     outgoing.end();
     return;
@@ -133,7 +178,15 @@ async function sendWebResponse(response, outgoing, method) {
   outgoing.end(Buffer.from(await response.arrayBuffer()));
 }
 
-export async function createStandaloneHandler({pool, env, workerModule = worker, uploadDir, allowedHosts}) {
+export async function createStandaloneHandler({
+  pool,
+  env,
+  workerModule = worker,
+  uploadDir,
+  allowedHosts,
+  smsAdapter = null,
+  hashSecret = null,
+}) {
   if (!pool || !env?.DATABASE_URL) throw new Error('A PostgreSQL pool and DATABASE_URL are required.');
   if (!path.isAbsolute(uploadDir || '')) throw new Error('UPLOAD_DIR must be an absolute path outside the application release.');
   const absoluteUploadDir = await mkdir(uploadDir, {recursive: true, mode: 0o750}).then(() => realpath(uploadDir));
@@ -156,6 +209,25 @@ export async function createStandaloneHandler({pool, env, workerModule = worker,
     BUCKET: createDiskBucket(absoluteUploadDir),
   };
   const makeAuth = ip => adminAuthRoutes({env: runtimeEnv, pool, ip});
+  const otpStore = createCustomerOtpStore({pool});
+  const secretBuffer = typeof hashSecret === 'string'
+    ? Buffer.from(hashSecret, 'utf8')
+    : hashSecret instanceof Uint8Array
+      ? Buffer.from(hashSecret)
+      : typeof env.CUSTOMER_AUTH_HMAC_SECRET === 'string'
+        ? Buffer.from(env.CUSTOMER_AUTH_HMAC_SECRET, 'utf8')
+        : null;
+  const strongSecret = secretBuffer && secretBuffer.length >= 32 ? secretBuffer : null;
+  const validSmsAdapter = smsAdapter &&
+    typeof smsAdapter.send === 'function';
+  const sendService = strongSecret && validSmsAdapter
+    ? createCustomerOtpSendService({store: otpStore, smsAdapter, hashSecret: strongSecret})
+    : null;
+  const verificationService = strongSecret
+    ? createOtpVerificationService({pool, hashSecret: strongSecret})
+    : null;
+  const registrationService = createCustomerRegistrationService({pool});
+  const referralAdminService = createCustomerReferralAdminService({pool});
 
   return async function handle(request, outgoing) {
     const requestId = crypto.randomUUID();
@@ -207,8 +279,130 @@ export async function createStandaloneHandler({pool, env, workerModule = worker,
         return sendWebResponse(loginPage(), outgoing, method);
       }
 
-      if (pathName.startsWith('/api/auth/') && pathName !== '/api/auth/status') {
-        return sendWebResponse(responseJson({message: 'این قابلیت فعال نیست.'}, 404), outgoing, method);
+      if (['/login', '/register', '/account'].includes(pathName) && method === 'GET') {
+        const backendRequested = runtimeEnv.AUTH_CUSTOMER_ENABLED === 'true';
+        const previewRequested = runtimeEnv.AUTH_CUSTOMER_PREVIEW_ENABLED === 'true';
+        let admin = null;
+        try {
+          admin = await authRoutes.session(new Request(url, {headers: headersForFetch(request, ip)}));
+        } catch {
+          return sendWebResponse(new Response('سرویس احراز هویت در دسترس نیست.', {
+            status: 503,
+            headers: {'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex, nofollow'},
+          }), outgoing, method);
+        }
+        if (!backendRequested || !previewRequested || !admin) {
+          return sendWebResponse(new Response('این صفحه در دسترس نیست.', {
+            status: 404,
+            headers: {'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex, nofollow'},
+          }), outgoing, method);
+        }
+        const forwarded = headersForFetch(request, ip);
+        const pageRequest = new Request(url, {headers: forwarded});
+        try {
+          const accessRaw = cookieValue(pageRequest, ACCESS_COOKIE);
+          const customer = await findCustomerSession(pool, accessRaw);
+          if (pathName === '/login') {
+            if (customer) {
+              outgoing.writeHead(302, {location: '/account', 'cache-control': 'no-store', 'x-robots-tag': 'noindex, nofollow'});
+              outgoing.end();
+              return;
+            }
+            return sendWebResponse(customerAuthPage(CUSTOMER_LOGIN_HTML), outgoing, method);
+          }
+          if (pathName === '/account') {
+            if (!customer) {
+              return sendWebResponse(customerRedirect('/login', runtimeEnv, true), outgoing, method);
+            }
+            return sendWebResponse(customerAuthPage(CUSTOMER_ACCOUNT_HTML), outgoing, method);
+          }
+          if (customer) {
+            outgoing.writeHead(302, {location: '/account', 'cache-control': 'no-store', 'x-robots-tag': 'noindex, nofollow'});
+            outgoing.end();
+            return;
+          }
+          const proofRaw = cookieValue(pageRequest, PROOF_COOKIE);
+          if (!validateOpaqueCredential(proofRaw)) {
+            return sendWebResponse(customerRedirect('/login', runtimeEnv, true), outgoing, method);
+          }
+          const proofHash = hashOpaqueCredential(proofRaw);
+          const proof = await pool.query(
+            `select phone_e164,(expires_at > now()) as unexpired,used_at,revoked_at
+               from public.kimia_customer_registration_proofs
+              where proof_hash=$1`,
+            [proofHash],
+          );
+          const row = proof.rows[0];
+          if (!row || row.used_at || row.revoked_at || !row.unexpired) {
+            return sendWebResponse(customerRedirect('/login', runtimeEnv, true), outgoing, method);
+          }
+          return sendWebResponse(customerAuthPage(CUSTOMER_REGISTER_HTML), outgoing, method);
+        } catch {
+          return sendWebResponse(new Response('سرویس احراز هویت در دسترس نیست.', {
+            status: 503,
+            headers: {'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex, nofollow'},
+          }), outgoing, method);
+        }
+      }
+
+      if (pathName === '/api/auth' || pathName.startsWith('/api/auth/')) {
+        const readiness = async () => {
+          if (!strongSecret) return {ok: false, reason: 'missing_secret'};
+          if (!validSmsAdapter) return {ok: false, reason: 'missing_transport'};
+          if (!sendService || !verificationService || !registrationService) {
+            return {ok: false, reason: 'missing_configuration'};
+          }
+          try {
+            const required = await pool.query(
+              `select count(*)=8 as ready
+                 from pg_tables
+                where schemaname='public'
+                  and tablename=any($1::text[])`,
+              [[
+                'kimia_customer_accounts',
+                'kimia_customer_otp_challenges',
+                'kimia_customer_registration_proofs',
+                'kimia_customer_access_sessions',
+                'kimia_customer_send_events',
+                'kimia_referral_people',
+                'kimia_customer_referrals',
+                'kimia_customer_referral_history',
+              ]],
+            );
+            if (!Boolean(required.rows[0]?.ready)) return {ok: false, reason: 'missing_schema'};
+            return {ok: true};
+          } catch {
+            return {ok: false, state: 'outage', reason: 'outage'};
+          }
+        };
+        const customerAuthHttp = createCustomerAuthHttp({
+          pool,
+          env: runtimeEnv,
+          sendService,
+          verificationService,
+          registrationService,
+          adminSession: async forwardedRequest => authRoutes.session(forwardedRequest),
+          readiness,
+        });
+        const forwarded = headersForFetch(request, ip);
+        let authBody;
+        if (method === 'POST') {
+          try {
+            authBody = await requestBody(request, 4096);
+          } catch (error) {
+            if (error?.status === 413) {
+              return sendWebResponse(customerAuthErrorResponse('request_too_large', 413), outgoing, method);
+            }
+            throw error;
+          }
+        }
+        const authRequest = new Request(url, {
+          method,
+          headers: forwarded,
+          ...(authBody ? {body: authBody} : {}),
+        });
+        const response = await customerAuthHttp.handle(authRequest);
+        if (response) return sendWebResponse(response, outgoing, method);
       }
       if (pathName === '/api/bookings' || pathName === '/api/bookings/lookup') {
         return sendWebResponse(responseJson({message: 'نوبت‌دهی آنلاین فعال نیست.'}, 404), outgoing, method);
@@ -229,6 +423,68 @@ export async function createStandaloneHandler({pool, env, workerModule = worker,
           }
           return;
         }
+      }
+
+      const referralApi = '/api/admin/customer-referrals';
+      if (pathName === referralApi || pathName.startsWith(referralApi + '/')) {
+        if (runtimeEnv.AUTH_CUSTOMER_ENABLED !== 'true' ||
+            runtimeEnv.AUTH_CUSTOMER_PREVIEW_ENABLED !== 'true') {
+          return sendWebResponse(responseJson({message: 'این مسیر پیدا نشد.'}, 404), outgoing, method);
+        }
+        if (method !== 'GET' && method !== 'PUT') {
+          return sendWebResponse(new Response(JSON.stringify({
+            code: 'method_not_allowed',
+            message: 'روش درخواست پشتیبانی نمی‌شود.',
+          }), {
+            status: 405,
+            headers: {'content-type': 'application/json; charset=utf-8', allow: 'GET, PUT', 'cache-control': 'no-store'},
+          }), outgoing, method);
+        }
+
+        const historyMatch = pathName.match(/^\/api\/admin\/customer-referrals\/([0-9a-f-]{36})\/history$/i);
+        const customerMatch = pathName.match(/^\/api\/admin\/customer-referrals\/([0-9a-f-]{36})$/i);
+        if (method === 'GET' && historyMatch) {
+          const result = await referralAdminService.history(historyMatch[1]);
+          const status = result.ok ? 200 : result.code === 'invalid_customer' ? 400 : 503;
+          return sendWebResponse(responseJson(result, status), outgoing, method);
+        }
+        if (method === 'GET' && pathName === referralApi) {
+          const result = await referralAdminService.list(url.searchParams.get('search') || '');
+          const status = result.ok ? 200 : 400;
+          return sendWebResponse(responseJson(result, status), outgoing, method);
+        }
+        if (method === 'PUT' && customerMatch) {
+          let requestOrigin;
+          try {
+            requestOrigin = request.headers.origin ? new URL(request.headers.origin).origin : '';
+          } catch {
+            requestOrigin = '';
+          }
+          if (requestOrigin !== origin.origin) {
+            return sendWebResponse(responseJson({ok: false, code: 'invalid_origin', message: 'درخواست معتبر نیست.'}, 403), outgoing, method);
+          }
+          if (!String(request.headers['content-type'] || '').toLowerCase().startsWith('application/json')) {
+            return sendWebResponse(responseJson({ok: false, code: 'unsupported_media_type', message: 'درخواست باید JSON باشد.'}, 415), outgoing, method);
+          }
+          const bytes = await requestBody(request, 16384);
+          let input;
+          try {
+            input = JSON.parse(bytes.toString('utf8'));
+          } catch {
+            return sendWebResponse(responseJson({ok: false, code: 'invalid_json', message: 'ساختار درخواست معتبر نیست.'}, 400), outgoing, method);
+          }
+          const result = await referralAdminService.save({
+            customerId: customerMatch[1],
+            actorId: session.id,
+            input,
+          });
+          const status = result.ok ? 200
+            : result.code === 'customer_not_found' ? 404
+              : result.code === 'invalid_referral' ? 400
+                : 503;
+          return sendWebResponse(responseJson(result, status), outgoing, method);
+        }
+        return sendWebResponse(responseJson({ok: false, code: 'not_found', message: 'این مسیر پیدا نشد.'}, 404), outgoing, method);
       }
 
       const limit = pathName === '/api/admin/upload' ? 5 * 1024 * 1024 : 64 * 1024;

@@ -298,6 +298,7 @@ h2{
     <button data-tab="gallery">تصاویر و نمونه‌کارها</button>
     <button data-tab="team">تیم</button>
     <button data-tab="hours">ساعت کاری</button>
+    <button id="referralTab" data-tab="customer-referrals" hidden>معرف‌ها و راه آشنایی</button>
     <button data-tab="settings">اطلاعات و لوگو</button>
   </nav>
 
@@ -395,6 +396,91 @@ h2{
       </form>
     </section>
 
+    <section data-panel="customer-referrals" hidden>
+      <h1>معرف‌ها و راه آشنایی مشتریان</h1>
+      <p style="color:var(--text-muted);margin-bottom:18px">اعلام مشتری تا بررسی و ثبت مدیر تأییدشده نیست. اشخاص هم‌نام جداگانه ثبت می‌شوند؛ این اطلاعات هیچ دسترسی یا پاداشی ایجاد نمی‌کند.</p>
+      <div class="grid">
+        <section class="box" aria-labelledby="referralSearchTitle">
+          <h2 id="referralSearchTitle">یافتن مشتری</h2>
+          <label for="referralSearch">نام یا شمارهٔ تماس</label>
+          <input id="referralSearch" autocomplete="off" maxlength="100">
+          <button id="referralSearchButton" type="button">جست‌وجو</button>
+          <div id="referralCustomers" aria-live="polite" style="margin-top:16px"></div>
+        </section>
+        <section id="referralEditor" class="box" hidden aria-labelledby="referralEditorTitle">
+          <h2 id="referralEditorTitle" tabindex="-1">ثبت یا اصلاح اطلاعات معرف</h2>
+          <p id="referralCustomer" class="status"></p>
+          <p id="referralDeclaration" class="status" hidden></p>
+          <form id="referralForm">
+            <label for="referralDiscovery">راه آشنایی با سایت</label>
+            <select id="referralDiscovery" required>
+              <option value="not_reported">ثبت نشده</option>
+              <option value="unknown">نامشخص</option>
+              <option value="personal_referral">معرفی شخص</option>
+              <option value="instagram">اینستاگرام</option>
+              <option value="search">جست‌وجو</option>
+              <option value="walk_in">مراجعهٔ مستقیم</option>
+              <option value="other">سایر</option>
+            </select>
+
+            <fieldset style="border:1px solid var(--border-gold);border-radius:10px;padding:14px;margin:12px 0">
+              <legend>معرف سایت</legend>
+              <label for="siteReferralStatus">وضعیت</label>
+              <select id="siteReferralStatus" required>
+                <option value="not_reviewed">هنوز بررسی نشده</option>
+                <option value="unknown">نامشخص</option>
+                <option value="none">بدون معرف شخصی</option>
+                <option value="confirmed">تأییدشده</option>
+              </select>
+              <div id="sitePersonFields" hidden>
+                <label for="sitePersonName">نام معرف سایت</label>
+                <input id="sitePersonName" maxlength="150">
+                <label for="sitePersonKind">نوع شخص</label>
+                <select id="sitePersonKind">
+                  <option value="customer">مشتری</option>
+                  <option value="staff">پرسنل</option>
+                  <option value="external">شخص بیرونی</option>
+                </select>
+                <label for="siteIntroducedOn">تاریخ اولین معرفی</label>
+                <input id="siteIntroducedOn" type="date">
+              </div>
+            </fieldset>
+
+            <fieldset style="border:1px solid var(--border-gold);border-radius:10px;padding:14px;margin:12px 0">
+              <legend>معرف مراجعه به سالن</legend>
+              <label for="salonReferralStatus">وضعیت</label>
+              <select id="salonReferralStatus" required>
+                <option value="not_reviewed">هنوز بررسی نشده</option>
+                <option value="unknown">نامشخص</option>
+                <option value="none">بدون معرف شخصی</option>
+                <option value="confirmed">تأییدشده</option>
+              </select>
+              <label><input id="sameReferral" type="checkbox"> همان معرف سایت است</label>
+              <div id="salonPersonFields" hidden>
+                <label for="salonPersonName">نام معرف سالن</label>
+                <input id="salonPersonName" maxlength="150">
+                <label for="salonPersonKind">نوع شخص</label>
+                <select id="salonPersonKind">
+                  <option value="customer">مشتری</option>
+                  <option value="staff">پرسنل</option>
+                  <option value="external">شخص بیرونی</option>
+                </select>
+              </div>
+              <div id="salonIntroducedOnField" hidden>
+                <label for="salonIntroducedOn">تاریخ اولین معرفی به سالن</label>
+                <input id="salonIntroducedOn" type="date">
+              </div>
+            </fieldset>
+            <label for="referralReason">دلیل اصلاح (اختیاری)</label>
+            <textarea id="referralReason" maxlength="500"></textarea>
+            <button type="submit">ذخیره و ثبت در تاریخچه</button>
+          </form>
+          <h2>تاریخچهٔ تغییرات</h2>
+          <div id="referralHistory" aria-live="polite"></div>
+        </section>
+      </div>
+    </section>
+
     <section data-panel="settings" hidden>
       <h1>اطلاعات مجموعه و لوگو</h1>
       <form id="settingsForm" class="box" style="max-width:680px">
@@ -443,6 +529,21 @@ function option(select,label,value){const o=document.createElement('option');o.t
 function row(list,title,description,edit){const el=document.createElement('article');el.className='row';const h=document.createElement('h3');h.textContent=title;const p=document.createElement('p');p.textContent=description;el.append(h,p);if(edit){const b=document.createElement('button');b.textContent='ویرایش';b.type='button';b.onclick=edit;el.append(b)}list.append(el);return el}
 function date(t){return new Intl.DateTimeFormat('fa-IR',{timeZone:'Asia/Tehran',dateStyle:'medium',timeStyle:'short'}).format(new Date(t))}
 async function refresh(){data=await api('data');render()}
+let selectedReferralCustomer=null;
+function referralStatusName(status){return {not_reported:'ثبت نشده',not_reviewed:'هنوز بررسی نشده',unknown:'نامشخص',none:'بدون معرف شخصی',pending:'اعلام مشتری؛ بررسی‌نشده',confirmed:'تأییدشده'}[status]||status||'ثبت نشده'}
+function referralDeclarationText(customer){const declarations=[['سایت',customer.site_declaration_status,customer.site_declaration_kind,customer.site_declaration_value],['سالن',customer.salon_declaration_status,customer.salon_declaration_kind,customer.salon_declaration_value]];const declared=declarations.filter(([,status])=>status&&status!=='not_reported');return declared.length?declared.map(([place,status,kind,value])=>`${place}: ${referralStatusName(status)}${value?` · ${kind==='code'?'کد':'نام'} اعلام‌شده: ${value}`:''}`).join('\n'):'مشتری معرف شخصی اعلام نکرده است.'}
+function referralDateInputValue(value){const match=String(value??'').match(/^(\d{4}-\d{2}-\d{2})(?:T.*)?$/);return match?.[1]||''}
+function renderReferralCustomers(customers){const list=$('referralCustomers');list.replaceChildren();if(!customers.length){const p=document.createElement('p');p.textContent='مشتری‌ای پیدا نشد.';list.append(p);return}for(const customer of customers){const item=document.createElement('article');item.className='row';const title=document.createElement('h3');title.textContent=`${customer.first_name} ${customer.last_name}`;const details=document.createElement('p');details.textContent=`${customer.phone_e164}\nسایت: ${referralStatusName(customer.site_verification_status)} · سالن: ${referralStatusName(customer.salon_verification_status)}`;const select=document.createElement('button');select.type='button';select.textContent='ثبت یا اصلاح معرف';select.onclick=()=>openReferralEditor(customer);item.append(title,details,select);list.append(item)}}
+async function searchReferrals(){const button=$('referralSearchButton');button.disabled=true;try{const result=await api('customer-referrals?search='+encodeURIComponent($('referralSearch').value.trim()));renderReferralCustomers(result.customers);return result.customers}catch(error){message(error.message,true);return[]}finally{button.disabled=false}}
+function updateReferralFields(){const siteConfirmed=$('siteReferralStatus').value==='confirmed',salonConfirmed=$('salonReferralStatus').value==='confirmed';$('sitePersonFields').hidden=!siteConfirmed;$('sitePersonName').required=siteConfirmed;if(!siteConfirmed||!salonConfirmed)$('sameReferral').checked=false;$('sameReferral').disabled=!siteConfirmed||!salonConfirmed;const same=$('sameReferral').checked;$('salonPersonFields').hidden=same||!salonConfirmed;$('salonIntroducedOnField').hidden=!salonConfirmed;$('salonPersonName').required=!same&&salonConfirmed}
+function openReferralEditor(customer){selectedReferralCustomer=customer;$('referralEditor').hidden=false;$('referralCustomer').textContent=`${customer.first_name} ${customer.last_name} · ${customer.phone_e164}`;$('referralDiscovery').value=customer.site_discovery_channel||'not_reported';$('siteReferralStatus').value=customer.site_verification_status||'not_reviewed';$('salonReferralStatus').value=customer.salon_verification_status||'not_reviewed';$('sitePersonName').value=customer.site_referrer_name||'';$('sitePersonKind').value=customer.site_referrer_kind||'external';$('siteIntroducedOn').value=referralDateInputValue(customer.site_introduced_on);$('salonPersonName').value=customer.salon_referrer_name||'';$('salonPersonKind').value=customer.salon_referrer_kind||'external';$('salonIntroducedOn').value=referralDateInputValue(customer.salon_introduced_on);$('sameReferral').checked=customer.same_referrer_confirmed===true;$('referralReason').value='';$('referralDeclaration').textContent=referralDeclarationText(customer);$('referralDeclaration').hidden=false;updateReferralFields();loadReferralHistory(customer.id);$('referralEditorTitle').focus?.()}
+async function loadReferralHistory(customerId){const history=$('referralHistory');history.replaceChildren();try{const result=await api(`customer-referrals/${encodeURIComponent(customerId)}/history`);if(!result.history.length){const empty=document.createElement('p');empty.textContent='هنوز سابقه‌ای ثبت نشده است.';history.append(empty);return}for(const entry of result.history){const item=document.createElement('article');item.className='row';const title=document.createElement('h3');title.textContent={recorded:'ثبت اولیه',confirmed:'بررسی و ثبت مدیر',corrected:'اصلاح اطلاعات'}[entry.event_type]||'تغییر اطلاعات';const details=document.createElement('p');details.textContent=`${date(entry.created_at)} · ${entry.actor_email||'مدیر'}${entry.change_reason?`\nدلیل: ${entry.change_reason}`:''}`;item.append(title,details);history.append(item)}}catch(error){message(error.message,true)}}
+$('referralSearchButton').addEventListener('click',()=>searchReferrals());
+$('referralSearch').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();searchReferrals()}});
+$('siteReferralStatus').addEventListener('change',updateReferralFields);
+$('salonReferralStatus').addEventListener('change',updateReferralFields);
+$('sameReferral').addEventListener('change',()=>{if($('sameReferral').checked)$('salonReferralStatus').value='confirmed';updateReferralFields()});
+$('referralForm').addEventListener('submit',async event=>{event.preventDefault();if(!selectedReferralCustomer)return;const siteStatus=$('siteReferralStatus').value,salonStatus=$('salonReferralStatus').value;const person=(prefix,status)=>status==='confirmed'?{status,name:$(`${prefix}PersonName`).value,person_kind:$(`${prefix}PersonKind`).value,introduced_on:$(`${prefix}IntroducedOn`).value||null}:{status};const input={discovery_channel:$('referralDiscovery').value,site_referrer:person('site',siteStatus),salon_referrer:$('sameReferral').checked?{same_as_site:true,introduced_on:$('salonIntroducedOn').value||null}:person('salon',salonStatus),change_reason:$('referralReason').value};const button=event.currentTarget.querySelector('button[type=submit]');button.disabled=true;try{await api(`customer-referrals/${encodeURIComponent(selectedReferralCustomer.id)}`,'PUT',input);message('اطلاعات معرف ذخیره و در تاریخچه ثبت شد.');const customers=await searchReferrals();const updated=customers.find(customer=>customer.id===selectedReferralCustomer.id);if(updated)openReferralEditor(updated)}catch(error){message(error.message,true)}finally{button.disabled=false}});
 function render(){for(const id of ['servicesList','galleryList','teamList','bookingsList','appointmentsList'])$(id).replaceChildren();const sf=$('serviceForm'),gf=$('galleryForm');sf.elements.category_id.replaceChildren();for(const c of data.service_categories)option(sf.elements.category_id,c.name_fa,c.id);gf.elements.service_id.replaceChildren();option(gf.elements.service_id,'عمومی','');for(const s of data.services)option(gf.elements.service_id,s.name_fa,s.id);
  for(const s of data.services)row($('servicesList'),s.name_fa,(s.is_active?'فعال':'غیرفعال')+' · /services/'+s.slug,()=>fill(sf,s));for(const s of data.staff_members)row($('teamList'),s.display_name,s.role_title||'',()=>fill($('teamForm'),s));
  for(const g of data.gallery_items){const el=row($('galleryList'),g.caption_fa||g.alt_text_fa,g.is_published?'منتشر شده':'پیش‌نویس',()=>fill(gf,g));if(/^\/uploads\/[0-9a-f-]+\.(jpg|png|webp)$/.test(g.image_url)){const img=document.createElement('img');img.src=g.image_url;img.alt=g.alt_text_fa;el.prepend(img)}}
@@ -459,7 +560,7 @@ $('galleryFile').onchange=()=>upload($('galleryFile'),$('galleryForm').elements.
 $('heroImageFile').onchange=()=>upload($('heroImageFile'),$('settingsForm').elements.hero_image_url);
 $('confirmForm').onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,b=formData(f),button=f.querySelector('button');if(b.end<=b.start){message('پایان باید پس از شروع باشد.',true);return}try{button.disabled=true;await api('booking','POST',{id:b.id,action:'confirm',staff_id:b.staff_id,starts_at:b.start+':00+03:30',ends_at:b.end+':00+03:30'});$('confirmDialog').close();await refresh();message('نوبت ثبت شد. تأیید را تلفنی به مشتری اطلاع دهید.')}catch(err){message(err.message,true)}finally{button.disabled=false}};
 $('closeConfirm').onclick=()=>$('confirmDialog').close();$('reload').onclick=()=>refresh().catch(e=>message(e.message,true));$('adminSignout').addEventListener('click',async e=>{if(window.kimiaAuthMode!=='standalone')return;e.preventDefault();try{await fetch('/api/admin-auth/logout',{method:'POST',headers:{'content-type':'application/json'},body:'{}'});location.assign('/admin/login')}catch(err){message('خروج انجام نشد. دوباره تلاش کنید.',true)}});document.querySelectorAll('[data-reset]').forEach(b=>b.onclick=()=>$(b.dataset.reset).reset());document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==b.dataset.tab);document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));message('')});
-api('session').then(async s=>{window.kimiaAuthMode=s.auth_mode||'sites';if(!s.database_ready){$('system').textContent='پنل آماده است؛ دیتابیس هنوز متصل نشده. پس از اجرای migration و تنظیم اتصال، ویرایش اطلاعات، گالری و نوبت‌ها فعال می‌شود.';render();$('workspace').hidden=false;document.querySelectorAll('form button,form input,form select,form textarea').forEach(el=>el.disabled=true);return}$('system').textContent='دیتابیس متصل است. '+(s.uploads_ready?'فضای تصاویر آماده است.':'فضای تصاویر هنوز آماده نیست.');await refresh();$('workspace').hidden=false}).catch(e=>{$('system').textContent=e.message;$('system').classList.add('error')});
+api('session').then(async s=>{window.kimiaAuthMode=s.auth_mode||'sites';if(!s.database_ready){$('system').textContent='پنل آماده است؛ دیتابیس هنوز متصل نشده. پس از اجرای migration و تنظیم اتصال، ویرایش اطلاعات، گالری و نوبت‌ها فعال می‌شود.';render();$('workspace').hidden=false;document.querySelectorAll('form button,form input,form select,form textarea').forEach(el=>el.disabled=true);return}$('system').textContent='دیتابیس متصل است. '+(s.uploads_ready?'فضای تصاویر آماده است.':'فضای تصاویر هنوز آماده نیست.');await refresh();$('workspace').hidden=false;if(window.kimiaAuthMode==='standalone'){const response=await fetch('/api/auth/status',{cache:'no-store'});const authStatus=await response.json();if(response.ok&&authStatus.enabled){$('referralTab').hidden=false;await searchReferrals()}}}).catch(e=>{$('system').textContent=e.message;$('system').classList.add('error')});
 </script>
 </body>
 </html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+  <title>تکمیل ثبت‌نام | کیمیا</title>
+  <style>
+    @font-face{font-family:Estedad;src:url('/fonts/Estedad-wght.woff2') format('woff2');font-weight:100 900;font-display:swap}
+    :root{--bg:#070f0c;--panel:#10271d;--gold:#d8b675;--text:#f5f0e7;--muted:#d0c8bb}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.8 Estedad,Tahoma,sans-serif}main{min-height:100vh;display:grid;place-items:center;padding:20px}.panel{width:min(620px,100%);background:var(--panel);border:1px solid rgba(216,182,117,.3);border-radius:18px;padding:clamp(20px,5vw,32px)}h1{margin:0 0 10px;color:var(--gold);font-size:clamp(23px,6vw,28px)}h2{font-size:18px;color:var(--gold);margin:22px 0 8px}p{margin:8px 0;color:var(--muted)}label{display:block;margin-top:12px}input,select{width:100%;min-height:46px;padding:10px 12px;border-radius:10px;border:1px solid #dcd1c2;font:inherit}select{background:#fff;color:#241f17}.check{display:flex;gap:10px;align-items:flex-start;margin:16px 0}.check input{width:20px;height:20px;min-height:20px;margin-top:5px;flex:none}button{width:100%;min-height:48px;margin-top:14px;padding:10px;border:0;border-radius:10px;background:var(--gold);color:#0f1d16;font:600 15px Estedad,Tahoma,sans-serif;cursor:pointer}button:disabled{opacity:.65;cursor:not-allowed}.status{min-height:28px;margin-top:12px;color:var(--muted);white-space:pre-line}.hint{font-size:14px}.group{border:1px solid rgba(216,182,117,.3);border-radius:12px;padding:12px 16px;margin:14px 0}.links{display:flex;justify-content:space-between;gap:12px;margin-top:18px}.links a{color:var(--gold);text-underline-offset:3px}[hidden]{display:none!important}input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #fff;outline-offset:3px}@media(max-width:360px){.links{flex-direction:column}}
+  </style>
+</head>
+<body><main><section class="panel" aria-labelledby="registerTitle"><h1 id="registerTitle">تکمیل اطلاعات مشتری</h1>
+<p>شمارهٔ همراه شما پس از تأیید ثبت شده است. اطلاعات معرف اختیاری است و اعلام شما تا بررسی مدیر تأییدشده محسوب نمی‌شود.</p>
+<form id="registerForm">
+ <label for="first">نام</label><input id="first" name="first_name" autocomplete="given-name" required>
+ <label for="last">نام خانوادگی</label><input id="last" name="last_name" autocomplete="family-name" required>
+ <label class="check"><input id="marketing" type="checkbox" name="marketing">مایلم دربارهٔ پیشنهادها مطلع شوم</label>
+ <h2>راه آشنایی با سایت</h2>
+ <label for="discovery">چطور با سایت کیمیا آشنا شدید؟</label>
+ <select id="discovery">
+  <option value="not_reported">ترجیح می‌دهم نگویم</option>
+  <option value="unknown">به یاد ندارم</option>
+  <option value="personal_referral">معرفی یک شخص</option>
+  <option value="instagram">اینستاگرام</option>
+  <option value="search">جست‌وجو در اینترنت</option>
+  <option value="walk_in">مراجعهٔ مستقیم</option>
+  <option value="other">راه دیگری</option>
+ </select>
+ <fieldset class="group">
+  <legend>شخص معرف سایت (اختیاری)</legend>
+  <label for="siteReferral">وضعیت معرف سایت</label>
+  <select id="siteReferral">
+   <option value="not_reported">ثبت نمی‌کنم</option>
+   <option value="unknown">نامشخص</option>
+   <option value="none">معرف شخصی نداشتم</option>
+   <option value="pending">می‌خواهم نام یا کد معرف را اعلام کنم</option>
+  </select>
+  <div id="siteDetails" hidden>
+   <label for="siteKind">نوع اطلاعات</label>
+   <select id="siteKind"><option value="name">نام معرف</option><option value="code">کد معرفی</option></select>
+   <label for="siteValue">نام یا کد معرف سایت</label>
+   <input id="siteValue" autocomplete="off">
+  </div>
+ </fieldset>
+ <fieldset class="group">
+  <legend>شخص معرف مراجعه به سالن (اختیاری)</legend>
+  <label for="salonReferral">وضعیت معرف سالن</label>
+  <select id="salonReferral">
+   <option value="not_reported">ثبت نمی‌کنم</option>
+   <option value="unknown">نامشخص</option>
+   <option value="none">معرف شخصی نداشتم</option>
+   <option value="pending">می‌خواهم نام یا کد معرف را اعلام کنم</option>
+  </select>
+  <label class="check"><input id="sameReferrer" type="checkbox" disabled>معرف سالن همان معرف سایت است</label>
+  <div id="salonDetails" hidden>
+   <label for="salonKind">نوع اطلاعات</label>
+   <select id="salonKind"><option value="name">نام معرف</option><option value="code">کد معرفی</option></select>
+   <label for="salonValue">نام یا کد معرف سالن</label>
+   <input id="salonValue" autocomplete="off">
+  </div>
+ </fieldset>
+ <button id="submitButton" type="submit">ثبت اطلاعات</button>
+</form><div id="status" class="status" role="status" aria-live="polite"></div>
+<div id="recovery" class="links" hidden><a href="/login">بازگشت به ورود مشتری</a><a href="/">بازگشت به سایت</a></div>
+</section></main>
+<script>
+const form=document.getElementById('registerForm'),status=document.getElementById('status'),button=document.getElementById('submitButton');
+let submitting=false;
+function validateName(input,maximum,label){const length=Array.from(input.value.trim()).length;input.setCustomValidity(length<2||length>maximum?`${label} باید بین ۲ تا ${maximum} نویسه باشد.`:'')}
+function declaration(statusId,kindId,valueId){const state=document.getElementById(statusId).value;if(state!=='pending')return{status:state};return{status:state,kind:document.getElementById(kindId).value,value:document.getElementById(valueId).value.trim()}}
+function updateReferralFields(){const sitePending=document.getElementById('siteReferral').value==='pending',salonPending=document.getElementById('salonReferral').value==='pending';document.getElementById('siteDetails').hidden=!sitePending;document.getElementById('siteValue').required=sitePending;const same=document.getElementById('sameReferrer');same.disabled=!sitePending||!salonPending;if(same.disabled)same.checked=false;document.getElementById('salonDetails').hidden=!salonPending||same.checked;document.getElementById('salonValue').required=salonPending&&!same.checked}
+document.getElementById('first').addEventListener('input',event=>validateName(event.currentTarget,80,'نام'));
+document.getElementById('last').addEventListener('input',event=>validateName(event.currentTarget,100,'نام خانوادگی'));
+document.getElementById('siteReferral').addEventListener('change',updateReferralFields);document.getElementById('salonReferral').addEventListener('change',updateReferralFields);document.getElementById('sameReferrer').addEventListener('change',updateReferralFields);
+form.addEventListener('submit',async event=>{event.preventDefault();validateName(document.getElementById('first'),80,'نام');validateName(document.getElementById('last'),100,'نام خانوادگی');if(!form.reportValidity()||submitting)return;submitting=true;button.disabled=true;status.textContent='در حال ثبت اطلاعات…';document.getElementById('recovery').hidden=true;const site=declaration('siteReferral','siteKind','siteValue');const same=document.getElementById('sameReferrer').checked;const referral={discovery_channel:document.getElementById('discovery').value,same_referrer:same,site_referrer:site,salon_referrer:same?{...site}:declaration('salonReferral','salonKind','salonValue')};try{const response=await fetch('/api/auth/register',{method:'POST',headers:{'content-type':'application/json','accept':'application/json'},body:JSON.stringify({first_name:document.getElementById('first').value.trim(),last_name:document.getElementById('last').value.trim(),marketing:document.getElementById('marketing').checked,referral}),cache:'no-store'});let body;try{body=await response.json()}catch{throw new Error('پاسخ سرویس معتبر نیست. دوباره تلاش کنید.')}if(response.status===409&&body.recovery_action==='login'){status.textContent=body.message||'این شماره قبلاً ثبت شده است. برای ورود دوباره اقدام کنید.';document.getElementById('recovery').hidden=false;return}if(response.status===401||response.status===410){status.textContent=body.message||'مهلت تأیید تمام شده است. دوباره وارد شوید.';document.getElementById('recovery').hidden=false;return}if(!response.ok){status.textContent=body.message||'ثبت اطلاعات انجام نشد.';return}location.assign('/account')}catch(error){status.textContent=error.message||'ارتباط با سرویس برقرار نشد.'}finally{submitting=false;button.disabled=false}});
+window.addEventListener('pagehide',()=>{document.getElementById('first').value='';document.getElementById('last').value='';document.getElementById('marketing').checked=false;document.getElementById('siteValue').value='';document.getElementById('salonValue').value='';document.getElementById('siteValue').setCustomValidity('');document.getElementById('salonValue').setCustomValidity('')});
+window.addEventListener('pageshow',event=>{if(event.persisted)location.reload()});
+updateReferralFields();
+</script>
+</body></html>

@@ -7,10 +7,10 @@
 - Production با Node.js پشتیبانی‌شده اجرا می‌شود؛ `vite` و `npm run preview` فقط ابزار توسعه‌اند.
 - Node به PostgreSQL از طریق `DATABASE_URL` و pool بستهٔ `pg` وصل می‌شود. اتصال مستقیم PostgreSQL فقط به localhost است.
 - دیتابیس باید با نقش اختصاصی غیر superuser به نام `kimia_app` اجرا شود. نقش‌های سازگاری `anon`, `authenticated`, و `service_role` برای grantهای migrationهای تاریخی لازم‌اند و نباید مجوز ورود داشته باشند.
-- ترتیب migrationها: `001_initial_schema.sql`, `002_admin_booking.sql`, `003_booking_tracking.sql`, سپس `005_self_hosted_admin.sql`. Migration `004_customer_auth.sql` عمداً خارج از مسیر است؛ OTP، حساب مشتری، SMS، پرداخت و نوبت‌دهی عمومی غیرفعال می‌مانند.
+- ترتیب migrationهای مستقل: `001_initial_schema.sql`, `002_admin_booking.sql`, `003_booking_tracking.sql`, `005_self_hosted_admin.sql`, سپس `006_customer_auth_v1.sql` و `007_customer_referrals.sql`. Migration `004_customer_auth.sql` عمداً خارج از مسیر است؛ 006 و 007 فقط schemaهای حساب مشتری/معرف را آماده می‌کنند و OTP، SMS، لینک عمومی یا routeهای احراز هویت را فعال نمی‌کنند.
 - مدیر با رمز scrypt و session سمت سرور احراز هویت می‌شود. ایجاد/تغییر مدیر با دستور تعاملی انجام می‌شود؛ ورود از طریق Sites و هدرهای هویتی ارسالی کاربر در این مسیر قابل اعتماد نیستند.
 - فایل‌های تصویر در `UPLOAD_DIR` دائمی، خارج از release، ذخیره می‌شوند. فقط تصاویر منتشرشده با رضایت ثبت‌شده و لوگوی ثبت‌شده عمومی‌اند.
-- `/api/health` اتصال SQL و ثبت هر چهار migration موردنیاز را بررسی می‌کند و اطلاعات اتصال را برنمی‌گرداند.
+- `/api/health` اتصال SQL و ثبت چهار migration پایگاه baseline را بررسی می‌کند (`001`, `002`, `003`, `005`) و 006 را برای readiness health حساب نمی‌کند؛ آماده‌بودن schema مشتری به معنی فعال‌بودن ورود مشتری نیست و هیچ اطلاعات اتصال را برنمی‌گرداند.
 
 ## ۰. بررسی‌های بی‌تغییر روی VPS
 
@@ -171,7 +171,7 @@ ALLOWED_HOSTS=kbkimiabeauty.ir,www.kbkimiabeauty.ir,localhost,127.0.0.1
 sudo -u kimia sh -c 'set -a; . /etc/kimia/kimia.env; set +a; cd /opt/kimia/current; node server/migrate.js'
 ```
 
-معیار موفقیت، فهرست دقیق `001_initial_schema.sql, 002_admin_booking.sql, 003_booking_tracking.sql, 005_self_hosted_admin.sql` و exit code صفر است. Runner از advisory lock، checksum و ثبت ترتیب استفاده می‌کند؛ اجرای دوباره فقط checksumها را تأیید می‌کند. آن را با `--adopt-existing` فقط طبق بخش بعدی اجرا کنید.
+معیار موفقیت، فهرست دقیق `001_initial_schema.sql, 002_admin_booking.sql, 003_booking_tracking.sql, 005_self_hosted_admin.sql, 006_customer_auth_v1.sql, 007_customer_referrals.sql` و exit code صفر است. این فهرست شامل schema آمادهٔ مشتری و معرف است؛ `/api/health` همچنان چهار migration baseline را می‌سنجد و فعال‌بودن feature را ادعا نمی‌کند. Runner از advisory lock، checksum و ثبت ترتیب استفاده می‌کند؛ اجرای دوباره فقط checksumها را تأیید می‌کند. آن را با `--adopt-existing` فقط طبق بخش بعدی اجرا کنید.
 
 ### دیتابیس دارای داده یا schema قبلی
 

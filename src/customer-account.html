@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+ <title>حساب مشتری | کیمیا</title>
+ <style>@font-face{font-family:Estedad;src:url('/fonts/Estedad-wght.woff2') format('woff2');font-weight:100 900;font-display:swap}:root{--bg:#070f0c;--panel:#10271d;--gold:#d8b675;--text:#f5f0e7;--muted:#d0c8bb}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.8 Estedad,Tahoma,sans-serif}main{min-height:100vh;display:grid;place-items:center;padding:20px}.panel{width:min(460px,100%);background:var(--panel);border:1px solid rgba(216,182,117,.3);border-radius:18px;padding:clamp(20px,5vw,32px)}h1{color:var(--gold);font-size:clamp(23px,6vw,28px)}dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px}dd{margin:0;overflow-wrap:anywhere}button{width:100%;min-height:48px;margin-top:14px;padding:12px;border:0;border-radius:10px;background:var(--gold);color:#0f1d16;font:600 15px Estedad,Tahoma,sans-serif;cursor:pointer}button:disabled{opacity:.65;cursor:not-allowed}.status{min-height:28px;margin-top:12px;color:var(--muted)}.links{display:flex;justify-content:space-between;margin-top:18px}.links a{color:var(--gold);text-underline-offset:3px}[hidden]{display:none!important}button:focus-visible,a:focus-visible{outline:3px solid #fff;outline-offset:3px}@media(max-width:360px){dl{grid-template-columns:1fr;gap:0}.links{flex-direction:column;gap:8px}}</style>
+</head>
+<body><main><section class="panel" aria-labelledby="accountTitle"><h1 id="accountTitle">حساب من</h1>
+<dl><dt>نام</dt><dd id="name">در حال بارگذاری…</dd><dt>موبایل</dt><dd id="phone">—</dd></dl>
+<button id="retry" type="button" hidden>تلاش دوباره برای بارگذاری</button>
+<button id="logout" type="button">خروج از حساب مشتری</button><div id="status" class="status" role="status" aria-live="polite"></div>
+<div class="links"><a href="/">بازگشت به سایت</a><a href="/privacy">حریم خصوصی</a></div>
+</section></main>
+<script>
+const status=document.getElementById('status'),retry=document.getElementById('retry'),logout=document.getElementById('logout');let loading=false,signingOut=false;
+function clearProfile(){document.getElementById('name').textContent='در حال بارگذاری…';document.getElementById('phone').textContent='—'}
+async function loadProfile(){if(loading)return;loading=true;retry.hidden=true;clearProfile();try{const response=await fetch('/api/auth/me',{headers:{accept:'application/json'},cache:'no-store'});let body;try{body=await response.json()}catch{throw new Error('پاسخ سرویس معتبر نیست. دوباره تلاش کنید.')}if(response.status===401){location.assign('/login');return}if(!response.ok)throw new Error(body.message||'حساب در دسترس نیست.');document.getElementById('name').textContent=body.first_name+' '+body.last_name;document.getElementById('phone').textContent=body.phone_e164;status.textContent=''}catch(error){status.textContent=error.message||'ارتباط با سرویس برقرار نشد.';retry.hidden=false}finally{loading=false}}
+retry.addEventListener('click',loadProfile);
+logout.addEventListener('click',async()=>{if(signingOut)return;signingOut=true;logout.disabled=true;status.textContent='در حال خروج…';try{const response=await fetch('/api/auth/logout',{method:'POST',headers:{'content-type':'application/json','accept':'application/json'},body:'{}',cache:'no-store'});let body;try{body=await response.json()}catch{throw new Error('پاسخ سرویس معتبر نیست. دوباره تلاش کنید.')}if(!response.ok)throw new Error(body.message||'خروج انجام نشد.');location.assign('/login')}catch(error){status.textContent=error.message||'ارتباط با سرویس برقرار نشد.'}finally{signingOut=false;logout.disabled=false}});
+window.addEventListener('pagehide',clearProfile);
+window.addEventListener('pageshow',event=>{if(event.persisted)loadProfile()});
+loadProfile();
+</script></body></html>

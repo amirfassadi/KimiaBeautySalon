@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#070f0c">
-<meta name="description" content="سالن زیبایی کیمیا؛ زیبایی، میکاپ و آتلیهٔ عکاسی پرتره در صادقیهٔ تهران.">
+<meta name="description" content="سالن زیبایی و آتلیهٔ عکاسی پرترهٔ کیمیا در صادقیه، غرب تهران؛ برای اطلاع از خدمات و هماهنگی مراجعه با سالن تماس بگیرید.">
 <title>سالن زیبایی کیمیا | Kimia Beauty & Atelier</title>
+<link rel="preload" as="image" href="__OFFER_PRELOAD_URL__" type="image/webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
@@ -421,7 +422,7 @@ h1,h2,h3,p{margin-top:0}
   background:var(--bg-ivory);
   color:var(--text-dark);
 }
-.services-section .section-label{color:#94723c}
+.services-section .section-label{color:#73562a}
 .services-section .section-title{color:var(--text-dark)}
 .services-section .section-intro{color:var(--text-dark-muted)}
 .services-head{
@@ -457,7 +458,7 @@ h1,h2,h3,p{margin-top:0}
   display:flex;
   justify-content:space-between;
   align-items:center;
-  color:#9a7846;
+  color:#73562a;
   font:600 13px var(--serif);
   letter-spacing:0.1em;
   margin-bottom:16px;
@@ -508,7 +509,7 @@ h1,h2,h3,p{margin-top:0}
 .service-choice{
   border:0;
   background:none;
-  color:#92723c;
+  color:#73562a;
   padding:0;
   cursor:pointer;
   font-weight:600;
@@ -519,6 +520,7 @@ h1,h2,h3,p{margin-top:0}
   color:#5a431d;
   transform:translateX(-3px);
 }
+.service-detail-link:focus-visible,.service-choice:focus-visible{outline-color:#73562a}
 
 /* Atelier Section (Deep Emerald Luxury Studio) */
 .atelier{
@@ -694,7 +696,7 @@ h1,h2,h3,p{margin-top:0}
   color:var(--text-dark);
   border-top:1px solid var(--line-ivory);
 }
-.experience-section .section-label{color:#94723c}
+.experience-section .section-label{color:#73562a}
 .experience-section .section-title{color:var(--text-dark)}
 .experience-section .section-intro{color:var(--text-dark-muted)}
 .journey{
@@ -736,7 +738,7 @@ h1,h2,h3,p{margin-top:0}
   padding:100px 0;
   border-top:1px solid var(--line-ivory);
 }
-.booking .section-label{color:#94723c}
+.booking .section-label{color:#73562a}
 .booking h2{
   font-size:clamp(32px,4vw,46px);
   line-height:1.35;
@@ -1007,7 +1009,7 @@ h1,h2,h3,p{margin-top:0}
   border-top:1px solid var(--line-ivory);
   padding:90px 0;
 }
-.tracking-section .section-label{color:#94723c}
+.tracking-section .section-label{color:#73562a}
 .tracking-section .section-title{color:var(--text-dark)}
 .tracking-section .section-intro{color:var(--text-dark-muted)}
 .tracking-box{
@@ -1553,7 +1555,7 @@ h1,h2,h3,p{margin-top:0}
   background:var(--bg-dark);color:var(--gold);font-size:27px;cursor:pointer;
 }
 .friday-offer-image{aspect-ratio:1.95;overflow:hidden;border-radius:10px;background:var(--bg-emerald)}
-.friday-offer-image svg{display:block;width:100%;height:100%}
+.friday-offer-image img{display:block;width:100%;height:100%;object-fit:cover}
 .friday-offer-label{margin:14px 0 5px;color:var(--gold);font-size:14px}
 .friday-offer h2{margin:0;color:var(--text-light);font:600 23px/1.7 var(--sans)}
 .friday-offer h2 strong{display:block;color:var(--gold);font-weight:700}
@@ -1579,7 +1581,7 @@ __SEO_HEAD__</head>
 <!-- Header & Navigation -->
 <header class="top">
   <div class="shell nav">
-    <a class="brand" href="#home" aria-label="سالن زیبایی کیمیا">
+    <a class="brand" href="#home" aria-label="سالن زیبایی کیمیا | KIMIA BEAUTY &amp; ATELIER">
       <span class="brand-mark">K</span>
       <span class="brand-text">
         <span class="brand-name">سالن زیبایی کیمیا</span>
@@ -1804,7 +1806,6 @@ __SEO_HEAD__</head>
               ساعت پیشنهادی
               <select name="time">
                 <option value="">با سالن هماهنگ می‌کنم</option>
-                <option>09:00</option>
                 <option>10:00</option>
                 <option>11:00</option>
                 <option>12:00</option>
@@ -1813,9 +1814,10 @@ __SEO_HEAD__</head>
                 <option>15:00</option>
                 <option>16:00</option>
                 <option>17:00</option>
+                <option>18:00</option>
               </select>
             </label>
-            <p class="booking-info">شنبه تا پنج‌شنبه، ۹ صبح تا ۶ عصر. روز و ساعت انتخابی برای هماهنگی است؛ نوبت پس از تأیید سالن قطعی می‌شود.</p>
+            <p class="booking-info"><span data-business-hours>همه‌روزه، از ساعت ۱۰ تا ۱۹</span>. لطفاً برای جلوگیری از معطلی، پیش از مراجعه حتماً با سالن هماهنگ کنید. برای مراجعه پیش از ساعت ۱۰ یا پس از ساعت ۱۹ نیز با سالن تماس بگیرید تا امکان پذیرش بررسی شود. زمان پیشنهادی پس از تأیید سالن قطعی می‌شود.</p>
           </fieldset>
 
           <fieldset class="booking-step" hidden>
@@ -1925,7 +1927,9 @@ __SEO_HEAD__</head>
           </div>
           <div class="contact-item">
             <small>ساعت کاری سالن</small>
-            <span>شنبه تا پنج‌شنبه، ۹ صبح تا ۶ عصر</span>
+            <span data-business-hours>همه‌روزه، از ساعت ۱۰ تا ۱۹</span>
+            <span>لطفاً برای جلوگیری از معطلی، پیش از مراجعه حتماً با سالن هماهنگ کنید.</span>
+            <span>برای مراجعه پیش از ساعت ۱۰ یا پس از ساعت ۱۹ نیز با سالن تماس بگیرید تا امکان پذیرش بررسی شود.</span>
           </div>
           <div class="contact-item">
             <small>تماس مستقیم</small>
@@ -1979,10 +1983,7 @@ __SEO_HEAD__</head>
 <aside class="friday-offer" id="fridayOffer" aria-labelledby="fridayOfferTitle" hidden>
   <button class="friday-offer-close" id="closeFridayOffer" type="button" aria-label="بستن پیشنهاد بلک فرایدی">×</button>
   <div class="friday-offer-image">
-    <!-- Frame only the copper hairstyle from the supplied reference screenshot. -->
-    <svg viewBox="1710 552 276 145" preserveAspectRatio="xMidYMid slice" role="img" aria-label="تصویر تبلیغاتی مدل موی کوتاه مسی" xmlns="http://www.w3.org/2000/svg">
-      <image href="/media/black-friday-haircut.jpg" width="2048" height="1143" preserveAspectRatio="none" />
-    </svg>
+    <img src="/media/black-friday-haircut-crop.webp" alt="تصویر تبلیغاتی مدل موی کوتاه مسی" width="744" height="390" loading="eager" decoding="async">
   </div>
   <p class="friday-offer-label">ویژهٔ بلک فرایدی · جمعه ۶ آذر</p>
   <h2 id="fridayOfferTitle">این جمعه، <strong>کوتاهی مو مهمان ما</strong></h2>
@@ -2175,8 +2176,8 @@ function validateStep(){
   }
   if(step===0&&form.elements.date.value){
     const d=form.elements.date.value;
-    if(d<today||new Date(d+'T12:00:00+03:30').getUTCDay()===5){
-      statusBox.textContent='روز پیشنهادی را از شنبه تا پنج‌شنبه و از امروز به بعد انتخاب کن.';
+    if(d<today){
+      statusBox.textContent='روز پیشنهادی را از امروز به بعد انتخاب کن.';
       form.elements.date.focus();
       return false;
     }

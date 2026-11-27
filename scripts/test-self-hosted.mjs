@@ -6,6 +6,7 @@ import {createServer, request as httpRequest} from 'node:http';
 import {PGlite} from '@electric-sql/pglite';
 import {pgcrypto} from '@electric-sql/pglite/contrib/pgcrypto';
 import {runMigrations} from '../server/migrate.js';
+import {applyBusinessHours} from '../server/business-hours.js';
 import {createPostgresAdapter, adapterInternals} from '../server/postgres-adapter.js';
 import {provisionAdmin} from '../server/bootstrap-admin.js';
 import {createStandaloneHandler} from '../server/index.js';
@@ -40,6 +41,13 @@ assert.deepEqual(versions.sort(), [
   '007_customer_referrals.sql',
 ].sort());
 await runMigrations(pool);
+await applyBusinessHours(pool);
+const approvedHours = (await db.query('select * from public.business_hours')).rows;
+assert.equal(approvedHours.length, 7);
+assert.ok(approvedHours.every(h => !h.is_closed && h.opens_at === '10:00:00' && h.closes_at === '19:00:00'));
+await db.query("update public.business_hours set opens_at='11:00' where iso_weekday=1");
+await applyBusinessHours(pool);
+assert.equal((await db.query('select opens_at from public.business_hours where iso_weekday=1')).rows[0].opens_at, '11:00:00');
 assert.equal((await db.query('select count(*)::int as count from public.kimia_schema_migrations')).rows[0].count, 6);
 assert.equal((await db.query("select to_regclass('public.customer_accounts') is not null as exists")).rows[0].exists, false);
 assert.equal((await db.query("select to_regclass('public.kimia_customer_accounts') is not null as exists")).rows[0].exists, true);

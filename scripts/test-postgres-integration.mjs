@@ -5,6 +5,7 @@ import path from 'node:path';
 import {createServer} from 'node:http';
 import {randomBytes, randomUUID} from 'node:crypto';
 import {runMigrations} from '../server/migrate.js';
+import {applyBusinessHours} from '../server/business-hours.js';
 import {provisionAdmin} from '../server/bootstrap-admin.js';
 import {createStandaloneHandler} from '../server/index.js';
 import {postgresConfig} from '../server/postgres-config.js';
@@ -65,6 +66,11 @@ try {
     '006_customer_auth_v1.sql', '007_customer_referrals.sql',
   ]);
   assert.deepEqual(await runMigrations(pool), firstRun, 'Migrations must be safely repeatable.');
+  await applyBusinessHours(pool);
+  const approvedHours = (await pool.query('select * from public.business_hours')).rows;
+  assert.equal(approvedHours.length, 7);
+  assert.ok(approvedHours.every(h => !h.is_closed && h.opens_at === '10:00:00' && h.closes_at === '19:00:00'));
+  await applyBusinessHours(pool);
   await provisionAdmin(pool, email, password);
 
   const env = {
